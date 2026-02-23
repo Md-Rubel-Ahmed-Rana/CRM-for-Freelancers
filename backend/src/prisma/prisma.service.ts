@@ -4,7 +4,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
-    console.log('Database connecting...');
+    console.log('Prisma is connecting to PostgreSQL...');
     try {
       await this.$connect();
       console.log('Database connected successfully!');
