@@ -4,6 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import { RequestMethod } from '@nestjs/common';
+import { traceIdMiddleware } from './common/middleware/trace-id.middleware';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,6 +25,9 @@ async function bootstrap() {
   });
   app.use(morgan('dev'));
   app.use(cookieParser());
+  app.use(traceIdMiddleware);
+  app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   await app.listen(port, () => {
     console.log(`CRM for Freelancers Server is running on port:${port}`);
