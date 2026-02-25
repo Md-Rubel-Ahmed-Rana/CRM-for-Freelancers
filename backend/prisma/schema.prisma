@@ -16,8 +16,8 @@ model User {
   auth_provider AuthProvider @default(credentials)
   last_login_at DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@map("users")
 }
