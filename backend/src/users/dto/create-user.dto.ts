@@ -5,6 +5,8 @@ export const createUserSchema = z.object({
 
   email: z.email('Invalid email address'),
 
+  auth_provider: z.enum(['credentials', 'social']).optional(),
+
   password: z
     .string()
     .min(6, 'Password must be at least 6 characters')
