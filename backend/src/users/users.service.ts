@@ -25,6 +25,7 @@ export class UsersService {
       data: {
         ...createUserDto,
         has_password: !!createUserDto.password,
+        is_active: false,
       },
     });
 
@@ -46,12 +47,12 @@ export class UsersService {
   async findAll(): Promise<Omit<User, 'password'>[]> {
     const users = await this.prisma.user.findMany({
       orderBy: { created_at: 'desc' },
+      omit: { password: false },
     });
-
-    return users.map((user) => this.excludePassword(user));
+    return users;
   }
 
-  async findOne(id: string): Promise<Omit<User, 'password'>> {
+  async findById(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -59,8 +60,7 @@ export class UsersService {
     if (!user) {
       throw new ApiError(HttpStatus.NOT_FOUND, 'User not found');
     }
-
-    return this.excludePassword(user);
+    return user;
   }
 
   async update(
