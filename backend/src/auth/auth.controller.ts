@@ -7,12 +7,14 @@ import {
   Get,
   Patch,
   Res,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import type { LoginUserDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { RegisterDto } from './auth.schema';
+import { LoginDto, RegisterDto } from './auth.schema';
 import { UserSession } from '@prisma/client';
 import { randomUUID } from 'crypto';
 
@@ -36,6 +38,18 @@ export class AuthController {
     const { access_token, refresh_token, user } =
       await this.authService.register(dto as any, sessionInfo as any);
 
+    this.setCookie(response, { access_token, refresh_token });
+
+    return { user, message: 'User has been registered successfully' };
+  }
+
+  private setCookie(
+    response: Response,
+    {
+      access_token,
+      refresh_token,
+    }: { access_token: string; refresh_token: string },
+  ) {
     response.cookie('access_token', access_token, {
       httpOnly: true,
       secure: true,
@@ -47,36 +61,33 @@ export class AuthController {
       secure: true,
       sameSite: 'strict',
     });
-
-    return { user, message: 'User has been registered successfully' };
   }
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   async login(
-    @Body() loginDto: LoginUserDto,
+    @Body() loginDto: LoginDto,
     @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) response: Response,
   ) {
-    const sessionInfo = {
-      ip_address: req.ip,
-      user_agent: req.headers['user-agent'] || '',
+    const sessionInfo: Partial<UserSession> = {
+      ip_address: req.ip ?? null,
+      user_agent: req.headers['user-agent'] ?? null,
+      device_id: randomUUID(),
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     };
 
-    const result = await this.authService.credentialsLogin(
-      loginDto,
-      sessionInfo as any,
-    );
+    const { access_token, refresh_token, user } =
+      await this.authService.credentialsLogin(
+        loginDto as any,
+        sessionInfo as any,
+      );
 
-    res.cookie('refresh_token', result.refresh_token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    this.setCookie(response, { access_token, refresh_token });
 
     return {
-      access_token: result.access_token,
-      user: result.user,
+      message: 'User logged in successfully',
+      user,
     };
   }
 

@@ -119,6 +119,12 @@ export class AuthService {
       },
     });
 
+    const loggedInUser = await this.prisma.user.update({
+      where: { id: user.id },
+      data: { last_login_at: new Date() },
+      omit: { password: true },
+    });
+
     const tokens = await this.generateTokens(
       {
         sub: user.id,
@@ -128,11 +134,9 @@ export class AuthService {
       session.id,
     );
 
-    const { password: _, ...safeUser } = user;
-
     return {
       ...tokens,
-      user: safeUser,
+      user: loggedInUser,
     };
   }
 
