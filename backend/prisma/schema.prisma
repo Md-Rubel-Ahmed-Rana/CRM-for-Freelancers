@@ -28,7 +28,7 @@ model User {
 model UserSession {
   id            String   @id @default(uuid())
   user_id       String
-  refresh_token String
+  refresh_token String?
   device_id     String?
   user_agent    String?
   ip_address    String?
