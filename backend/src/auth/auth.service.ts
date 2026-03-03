@@ -140,6 +140,13 @@ export class AuthService {
     };
   }
 
+  async getUserProfile(id: string) {
+    return await this.prisma.user.findUnique({
+      where: { id },
+      omit: { password: true },
+    });
+  }
+
   async refreshToken(refreshToken: string) {
     const payload = await this.jwtService.verifyAsync(refreshToken, {
       secret: this.configService.get('JWT_ACCESS_SECRET'),
