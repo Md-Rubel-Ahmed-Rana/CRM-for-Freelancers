@@ -3,7 +3,6 @@ import * as bcrypt from 'bcrypt';
 import { UsersService } from 'src/users/users.service';
 import { User, UserSession } from '@prisma/client';
 import { LoginUserDto } from './dto/login.dto';
-import { TokenDto } from './dto/token.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -33,6 +32,7 @@ export class AuthService {
     refresh_token: string;
     user: SafeUser;
   }> {
+    console.log({ createAuthDto, sessionInfo });
     const hashedPassword = await bcrypt.hash(
       createAuthDto.password,
       this.saltRound,
@@ -43,6 +43,7 @@ export class AuthService {
       password: hashedPassword,
       auth_provider: 'credentials',
     });
+
     const session = await this.createSession(user.id, sessionInfo);
     const tokens = await this.generateTokens(
       {
@@ -100,7 +101,7 @@ export class AuthService {
 
   async refreshToken(refreshToken: string) {
     const payload = await this.jwtService.verifyAsync(refreshToken, {
-      secret: this.configService.get('JWT_SECRET'),
+      secret: this.configService.get('JWT_ACCESS_SECRET'),
     });
 
     const session = await this.prisma.userSession.findFirst({

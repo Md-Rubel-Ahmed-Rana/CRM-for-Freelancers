@@ -5,28 +5,46 @@ import {
   Req,
   UseGuards,
   Get,
-  Param,
   Patch,
   Res,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
 import type { LoginUserDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RegisterDto } from './auth.schema';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() createAuthDto: CreateAuthDto, @Req() req: Request) {
+  async register(
+    @Body() dto: RegisterDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const sessionInfo = {
       ip_address: req.ip,
       user_agent: req.headers['user-agent'] || '',
     };
 
-    return this.authService.register(createAuthDto, sessionInfo as any);
+    const { access_token, refresh_token, user } =
+      await this.authService.register(dto as any, sessionInfo as any);
+
+    response.cookie('access_token', access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+
+    response.cookie('refresh_token', refresh_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+
+    return { user };
   }
 
   @Post('login')
