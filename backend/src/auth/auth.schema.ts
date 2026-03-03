@@ -22,6 +22,25 @@ export const registerSchema = z
   })
   .strict();
 
+export const loginSchema = z
+  .object({
+    email: z.email({ error: 'Email is required' }),
+
+    password: z
+      .string({ error: 'Password is required' })
+      .min(8, 'Password must be at least 8 characters')
+      .max(100)
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        'Password must contain uppercase, lowercase and number',
+      ),
+  })
+  .strict();
+
 export class RegisterDto {
   static schema = registerSchema;
+}
+
+export class LoginDto {
+  static schema = loginSchema;
 }
