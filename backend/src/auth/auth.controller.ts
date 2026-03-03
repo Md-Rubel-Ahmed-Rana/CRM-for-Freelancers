@@ -28,17 +28,18 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
+    const device_id = randomUUID();
     const sessionInfo: Partial<UserSession> = {
       ip_address: req.ip ?? null,
       user_agent: req.headers['user-agent'] ?? null,
-      device_id: randomUUID(),
+      device_id,
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     };
 
     const { access_token, refresh_token, user } =
       await this.authService.register(dto as any, sessionInfo as any);
 
-    this.setCookie(response, { access_token, refresh_token });
+    this.setCookie(response, { access_token, refresh_token, device_id });
 
     return { user, message: 'User has been registered successfully' };
   }
@@ -48,7 +49,8 @@ export class AuthController {
     {
       access_token,
       refresh_token,
-    }: { access_token: string; refresh_token: string },
+      device_id,
+    }: { access_token: string; refresh_token: string; device_id: string },
   ) {
     response.cookie('access_token', access_token, {
       httpOnly: true,
@@ -61,6 +63,13 @@ export class AuthController {
       secure: true,
       sameSite: 'strict',
     });
+
+    response.cookie('device_id', device_id, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 1000 * 60 * 60 * 24 * 365,
+    });
   }
 
   @Post('login')
@@ -70,10 +79,11 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
+    const device_id = randomUUID();
     const sessionInfo: Partial<UserSession> = {
       ip_address: req.ip ?? null,
       user_agent: req.headers['user-agent'] ?? null,
-      device_id: randomUUID(),
+      device_id,
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     };
 
@@ -83,7 +93,7 @@ export class AuthController {
         sessionInfo as any,
       );
 
-    this.setCookie(response, { access_token, refresh_token });
+    this.setCookie(response, { access_token, refresh_token, device_id });
 
     return {
       message: 'User logged in successfully',

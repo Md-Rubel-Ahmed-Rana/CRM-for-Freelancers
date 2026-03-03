@@ -134,6 +134,11 @@ export class AuthService {
       session.id,
     );
 
+    await this.prisma.userSession.update({
+      where: { id: session.id },
+      data: { refresh_token: tokens.refresh_token },
+    });
+
     return {
       ...tokens,
       user: loggedInUser,
