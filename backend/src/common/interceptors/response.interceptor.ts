@@ -15,13 +15,29 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
     const request = ctx.getRequest();
 
     return next.handle().pipe(
-      map((data) => ({
-        statusCode: response.statusCode || HttpStatus.OK,
-        success: true,
-        message: data?.message || 'Request successful',
-        traceId: request['traceId'],
-        data: data?.data ?? data,
-      })),
+      map((originalResponse) => {
+        let message = 'Request successful';
+        let data = originalResponse;
+
+        if (
+          originalResponse &&
+          typeof originalResponse === 'object' &&
+          'message' in originalResponse
+        ) {
+          message = originalResponse.message;
+
+          const { message: _, ...rest } = originalResponse;
+          data = rest;
+        }
+
+        return {
+          statusCode: response.statusCode || HttpStatus.OK,
+          success: true,
+          message,
+          traceId: request['traceId'],
+          data,
+        };
+      }),
     );
   }
 }
