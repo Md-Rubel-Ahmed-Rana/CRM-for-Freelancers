@@ -13,6 +13,8 @@ import { AuthService } from './auth.service';
 import type { LoginUserDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RegisterDto } from './auth.schema';
+import { UserSession } from '@prisma/client';
+import { randomUUID } from 'crypto';
 
 @Controller('auth')
 export class AuthController {
@@ -24,9 +26,11 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const sessionInfo = {
-      ip_address: req.ip,
-      user_agent: req.headers['user-agent'] || '',
+    const sessionInfo: Partial<UserSession> = {
+      ip_address: req.ip ?? null,
+      user_agent: req.headers['user-agent'] ?? null,
+      device_id: randomUUID(),
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     };
 
     const { access_token, refresh_token, user } =
@@ -44,7 +48,7 @@ export class AuthController {
       sameSite: 'strict',
     });
 
-    return { user };
+    return { user, message: 'User has been registered successfully' };
   }
 
   @Post('login')

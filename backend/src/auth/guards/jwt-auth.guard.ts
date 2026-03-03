@@ -56,6 +56,10 @@ export class JwtAuthGuard implements CanActivate {
         throw new UnauthorizedException('Session invalid');
       }
 
+      if (!session || !session.refresh_token) {
+        throw new UnauthorizedException('Session refresh_token missing');
+      }
+
       const isValid = await bcrypt.compare(refreshToken, session.refresh_token);
 
       if (!isValid) {

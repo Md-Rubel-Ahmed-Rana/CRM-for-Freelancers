@@ -26,48 +26,80 @@ export class AuthService {
 
   async register(
     createAuthDto: CreateAuthDto,
-    sessionInfo: UserSession,
+    sessionInfo: Omit<UserSession, 'user_id'>,
   ): Promise<{
     access_token: string;
     refresh_token: string;
     user: SafeUser;
   }> {
-    console.log({ createAuthDto, sessionInfo });
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: createAuthDto.email },
+    });
+
+    if (existingUser) {
+      throw new ApiError(
+        HttpStatus.CONFLICT,
+        'User already exists with this email. Please login.',
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(
       createAuthDto.password,
       this.saltRound,
     );
 
-    const user = await this.userService.create({
-      ...createAuthDto,
-      password: hashedPassword,
-      auth_provider: 'credentials',
+    return await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          ...createAuthDto,
+          password: hashedPassword,
+          auth_provider: 'credentials',
+          has_password: true,
+          is_active: true,
+          last_login_at: new Date(),
+        },
+        omit: {
+          password: true,
+        },
+      });
+
+      const session = await tx.userSession.create({
+        data: {
+          user_id: user.id,
+          ...sessionInfo,
+        },
+      });
+
+      const tokens = await this.generateTokens(
+        {
+          sub: user.id,
+          email: user.email,
+          name: user.name,
+        },
+        session.id,
+      );
+
+      await tx.userSession.update({
+        where: { id: session.id },
+        data: {
+          refresh_token: await bcrypt.hash(
+            tokens.refresh_token,
+            this.saltRound,
+          ),
+        },
+      });
+
+      return {
+        ...tokens,
+        user,
+      };
     });
-
-    const session = await this.createSession(user.id, sessionInfo);
-    const tokens = await this.generateTokens(
-      {
-        sub: user.id,
-        email: user.email,
-        name: user.name,
-      },
-      session.id,
-    );
-
-    await this.prisma.userSession.update({
-      where: { id: session.id },
-      data: {
-        refresh_token: await bcrypt.hash(tokens.refresh_token, this.saltRound),
-      },
-    });
-
-    return {
-      ...tokens,
-      user,
-    };
   }
 
-  async credentialsLogin(data: LoginUserDto, sessionInfo: UserSession) {
+  async credentialsLogin(
+    data: LoginUserDto,
+    sessionInfo: Omit<UserSession, 'user_id'>,
+  ) {
     const user = await this.userService.findByEmail(data.email);
 
     if (!user.password) {
@@ -80,7 +112,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const session = await this.createSession(user.id, sessionInfo);
+    const session = await this.prisma.userSession.create({
+      data: {
+        user_id: user.id,
+        ...sessionInfo,
+      },
+    });
 
     const tokens = await this.generateTokens(
       {
@@ -113,6 +150,10 @@ export class AuthService {
 
     if (!session) {
       throw new UnauthorizedException('Session expired');
+    }
+
+    if (!session.refresh_token) {
+      throw new UnauthorizedException('Session refresh_token missing');
     }
 
     const isValid = await bcrypt.compare(refreshToken, session.refresh_token);
@@ -190,15 +231,6 @@ export class AuthService {
     await this.logoutAll(userId);
 
     return { message: 'Password changed successfully' };
-  }
-
-  private async createSession(userId: string, sessionInfo: any) {
-    return await this.prisma.userSession.create({
-      data: {
-        user_id: userId,
-        ...sessionInfo,
-      },
-    });
   }
 
   private async generateTokens(
