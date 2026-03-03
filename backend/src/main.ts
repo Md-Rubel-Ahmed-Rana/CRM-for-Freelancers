@@ -7,6 +7,7 @@ import { RequestMethod } from '@nestjs/common';
 import { traceIdMiddleware } from './common/middleware/trace-id.middleware';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { ZodValidationPipe } from './common/pipes/zod-validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,11 +24,13 @@ async function bootstrap() {
       { path: '/health', method: RequestMethod.GET },
     ],
   });
+
   app.use(morgan('dev'));
   app.use(cookieParser());
   app.use(traceIdMiddleware);
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalPipes(new ZodValidationPipe());
 
   await app.listen(port, () => {
     console.log(`CRM for Freelancers Server is running on port:${port}`);

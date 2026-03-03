@@ -4,7 +4,6 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-  BadRequestException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ApiError } from '../errors/api.error';
@@ -21,18 +20,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let message = 'Something went wrong';
     let errorMessages: any[] = [];
 
+    // ✅ Custom ApiError
     if (exception instanceof ApiError) {
       statusCode = exception.statusCode;
       message = exception.message;
-      errorMessages = exception.errorMessages.length
+      errorMessages = exception.errorMessages?.length
         ? exception.errorMessages
         : [{ path: '', message }];
-    } else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
+    }
+
+    // ✅ Prisma Known Errors
+    else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
       switch (exception.code) {
-        case 'P2002':
+        case 'P2002': {
           statusCode = HttpStatus.CONFLICT;
 
-          // eslint-disable-next-line no-case-declarations
           const field = (exception.meta?.target as string[])?.[0];
 
           message = `${field} already exists`;
@@ -43,6 +45,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             },
           ];
           break;
+        }
 
         case 'P2025':
           statusCode = HttpStatus.NOT_FOUND;
@@ -61,21 +64,50 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           message = exception.message;
           errorMessages = [{ path: '', message }];
       }
-    } else if (exception instanceof Prisma.PrismaClientValidationError) {
+    }
+
+    // ✅ Prisma Validation Error
+    else if (exception instanceof Prisma.PrismaClientValidationError) {
       statusCode = HttpStatus.BAD_REQUEST;
       message = 'Validation error';
       errorMessages = [{ path: '', message: exception.message }];
-    } else if (exception instanceof HttpException) {
+    }
+
+    // ✅ NestJS HttpException (including Zod BadRequestException)
+    else if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
-      const res: any = exception.getResponse();
-      message = res.message || exception.message;
-      errorMessages = [{ path: '', message }];
-    } else if (exception instanceof BadRequestException) {
+
       const res: any = exception.getResponse();
 
-      if (res.errorMessages) {
-        errorMessages = res.errorMessages;
+      // Handle different possible response shapes
+      if (typeof res === 'string') {
+        message = res;
+        errorMessages = [{ path: '', message: res }];
+      } else {
+        message = res.message || exception.message;
+
+        if (res.errors) {
+          // 🔥 Zod validation errors
+          errorMessages = res.errors;
+        } else if (res.errorMessages) {
+          // Custom formatted errors
+          errorMessages = res.errorMessages;
+        } else if (Array.isArray(res.message)) {
+          // class-validator style errors
+          errorMessages = res.message.map((msg: string) => ({
+            path: '',
+            message: msg,
+          }));
+        } else {
+          errorMessages = [{ path: '', message }];
+        }
       }
+    }
+
+    // ✅ Unknown Errors
+    else if (exception instanceof Error) {
+      message = exception.message;
+      errorMessages = [{ path: '', message }];
     }
 
     response.status(statusCode).json({
