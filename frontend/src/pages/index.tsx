@@ -1,4 +1,5 @@
 import PageMetadata from "@/common/PageMetadata";
+import Login from "@/features/auth/components/Login";
 import { Geist, Geist_Mono } from "next/font/google";
 
 const geistSans = Geist({
@@ -18,7 +19,7 @@ export default function Home() {
       <div
         className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
       >
-        <h1 className="text-2xl">Hello World</h1>
+        <Login />
       </div>
     </>
   );
