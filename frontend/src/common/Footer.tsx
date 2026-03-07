@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-100 dark:bg-black border-t">
+    <footer className="border-t">
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid md:grid-cols-3 gap-10">
           {/* Logo + Description */}
@@ -40,13 +40,13 @@ const Footer = () => {
 
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/login" className="hover:text-blue-600">
+                <Link href="/auth/login" className="hover:text-blue-600">
                   Login
                 </Link>
               </li>
 
               <li>
-                <Link href="/signup" className="hover:text-blue-600">
+                <Link href="/auth/register" className="hover:text-blue-600">
                   Sign Up
                 </Link>
               </li>

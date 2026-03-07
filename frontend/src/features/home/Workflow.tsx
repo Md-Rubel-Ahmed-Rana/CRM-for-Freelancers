@@ -18,7 +18,7 @@ const steps = [
 
 const WorkflowSection = () => {
   return (
-    <section id="workflow" className="py-24 bg-gray-50 dark:bg-gray-900">
+    <section id="workflow" className="py-24">
       <div className="max-w-7xl mx-auto px-6">
         {/* Title */}
         <div className="text-center max-w-2xl mx-auto">

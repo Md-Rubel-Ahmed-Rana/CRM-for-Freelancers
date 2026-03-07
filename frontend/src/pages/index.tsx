@@ -18,9 +18,7 @@ export default function HomePage() {
   return (
     <>
       <PageMetadata />
-      <div
-        className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
-      >
+      <div className={`${geistSans.className} ${geistMono.className}`}>
         <Home />
       </div>
     </>
