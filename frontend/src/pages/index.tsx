@@ -1,6 +1,8 @@
 import PageMetadata from "@/common/PageMetadata";
-import Login from "@/features/auth/components/Login";
+import Home from "@/features/home";
+import RootLayout from "@/layout/RootLayout";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ReactElement } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,15 +14,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function Home() {
+export default function HomePage() {
   return (
     <>
       <PageMetadata />
-      <div
-        className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
-      >
-        <Login />
+      <div className={`${geistSans.className} ${geistMono.className}`}>
+        <Home />
       </div>
     </>
   );
 }
+
+HomePage.getLayout = function (page: ReactElement) {
+  return <RootLayout>{page}</RootLayout>;
+};
