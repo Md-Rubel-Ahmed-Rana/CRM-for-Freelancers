@@ -1,5 +1,7 @@
 import PageMetadata from "@/common/PageMetadata";
 import Login from "@/features/auth/components/Login";
+import RootLayout from "@/layout/RootLayout";
+import { ReactElement } from "react";
 
 const LoginPage = () => {
   return (
@@ -10,7 +12,7 @@ const LoginPage = () => {
         keywords="crm login, freelancer crm login, project management crm, freelancer dashboard login, client management system"
       />
 
-      <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+      <main className="min-h-screen flex items-center justify-center">
         <Login />
       </main>
     </>
@@ -18,3 +20,7 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+LoginPage.getLayout = function (page: ReactElement) {
+  return <RootLayout>{page}</RootLayout>;
+};

@@ -1,6 +1,8 @@
+import Image from "next/image";
+
 const HeroSection = () => {
   return (
-    <section className="w-full py-24 bg-linear-to-b from-white to-gray-100 dark:from-black dark:to-gray-900">
+    <section className="w-full py-24 ">
       <div className="max-w-7xl mx-auto px-6 text-center">
         <h1 className="text-4xl md:text-5xl font-bold leading-tight">
           Manage Clients & Projects
@@ -23,8 +25,15 @@ const HeroSection = () => {
         </div>
 
         <div className="mt-16 flex justify-center">
-          <div className="w-full max-w-5xl h-87.5 rounded-xl border shadow-lg bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-            Dashboard Preview
+          <div className="w-full max-w-5xl rounded-xl border shadow-lg overflow-hidden">
+            <Image
+              src="/dashboard-preview.png"
+              alt="Dashboard Preview"
+              width={1200}
+              height={700}
+              className="w-full h-auto"
+              priority
+            />
           </div>
         </div>
       </div>

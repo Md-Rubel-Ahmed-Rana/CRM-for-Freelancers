@@ -4,7 +4,6 @@ import store from "@/redux/store";
 import "@/styles/globals.css";
 import { NextPage } from "next";
 import { ToastContainer } from "react-toastify";
-import { ThemeProvider } from "next-themes";
 import { ReactElement, ReactNode } from "react";
 import { Provider } from "react-redux";
 
@@ -19,16 +18,9 @@ export type AppPropsWithLayout = AppProps & {
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <Provider store={store}>
-        {getLayout(<Component {...pageProps} />)}
-        <ToastContainer position="top-right" />
-      </Provider>
-    </ThemeProvider>
+    <Provider store={store}>
+      {getLayout(<Component {...pageProps} />)}
+      <ToastContainer position="top-right" />
+    </Provider>
   );
 }

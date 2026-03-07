@@ -28,15 +28,13 @@ const PasswordInput = <T extends FieldValues>({
 
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-        {label}
-      </label>
+      <label className="block text-sm font-medium ">{label}</label>
 
       <div className="relative">
         <input
           type={showPassword ? "text" : "password"}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm pr-10 focus:ring-2 focus:ring-indigo-500 outline-none"
+          className="w-full rounded-lg border border-gray-300  px-4 py-2 text-sm pr-10 focus:ring-2 focus:ring-indigo-500 outline-none"
           {...register(name, {
             required: "Password is required",
             minLength: {

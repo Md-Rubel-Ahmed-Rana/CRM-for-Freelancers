@@ -22,14 +22,12 @@ const LoginForm = () => {
     <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
       {/* Email */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Email Address
-        </label>
+        <label className="block text-sm font-medium  mb-1">Email Address</label>
 
         <input
           type="email"
           placeholder="john@example.com"
-          className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+          className="w-full rounded-lg border border-gray-300  px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
           {...register("email", {
             required: "Email is required",
             pattern: {

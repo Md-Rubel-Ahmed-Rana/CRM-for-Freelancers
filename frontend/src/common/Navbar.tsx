@@ -1,13 +1,21 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const Navbar = () => {
   return (
-    <nav className="w-full border-b bg-white dark:bg-black sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <div className="text-xl font-bold tracking-tight">MiniCRM</div>
+    <nav className="w-full border-b border-gray-500 sticky top-0 z-50">
+      <div className=" px-6 py-4 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/logo.png"
+            alt="MiniCRM Logo"
+            width={32}
+            height={32}
+            priority
+          />
+          <span className="text-xl font-bold tracking-tight">MiniCRM</span>
+        </Link>
 
-        {/* Navigation */}
         <div className="flex items-center gap-6 text-sm">
           <Link href="#features" className="hover:text-blue-600">
             Features
@@ -17,10 +25,10 @@ const Navbar = () => {
             How it works
           </Link>
 
-          <Link href="/login">Login</Link>
+          <Link href="/auth/login">Login</Link>
 
           <Link
-            href="/signup"
+            href="/auth/register"
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
           >
             Sign Up

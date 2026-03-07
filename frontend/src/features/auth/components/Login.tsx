@@ -3,7 +3,7 @@ import { ShieldCheck, Cookie } from "lucide-react";
 
 const Login = () => {
   return (
-    <div className="w-full max-w-md bg-white dark:bg-gray-900 shadow-lg rounded-xl p-8 space-y-6 border border-gray-200 dark:border-gray-800">
+    <div className="w-full max-w-md shadow-lg rounded-xl p-8 space-y-6 border border-gray-200">
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="flex justify-center">
@@ -23,7 +23,7 @@ const Login = () => {
       <div className="flex items-start gap-2 text-xs bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-3 rounded-lg">
         <Cookie className="w-4 h-4 text-yellow-600 mt-0.5" />
 
-        <p className="text-yellow-700 dark:text-yellow-400">
+        <p className="">
           Please ensure your browser allows cookies for secure authentication.
         </p>
       </div>
