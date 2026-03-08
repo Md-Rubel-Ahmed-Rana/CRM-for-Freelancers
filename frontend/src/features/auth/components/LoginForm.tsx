@@ -4,14 +4,15 @@ import PasswordInput from "@/components/PasswordInput";
 import { useUserLoginMutation } from "../api";
 import { handleApiMutation } from "@/utils/handleApiMutation";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const LoginForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ILogin>();
-  const [login] = useUserLoginMutation();
+  const [login, { isLoading }] = useUserLoginMutation();
   const router = useRouter();
 
   const handleLogin = async (data: ILogin) => {
@@ -29,7 +30,6 @@ const LoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
-      {/* Email */}
       <div>
         <label className="block text-sm font-medium  mb-1">Email Address</label>
 
@@ -51,30 +51,27 @@ const LoginForm = () => {
         )}
       </div>
 
-      {/* Password */}
       <PasswordInput<ILogin>
         name="password"
         register={register}
         errors={errors}
       />
 
-      {/* Forgot Password */}
       <div className="flex justify-end text-sm">
-        <a
+        <Link
           href="/forgot-password"
           className="text-indigo-600 hover:text-indigo-700"
         >
           Forgot password?
-        </a>
+        </Link>
       </div>
 
-      {/* Submit */}
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isLoading}
         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition disabled:opacity-60 cursor-pointer"
       >
-        {isSubmitting ? "Logging in..." : "Login"}
+        {isLoading ? "Logging in..." : "Login"}
       </button>
     </form>
   );
