@@ -55,19 +55,19 @@ export class AuthController {
     response.cookie('access_token', access_token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'none' as const,
     });
 
     response.cookie('refresh_token', refresh_token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'none' as const,
     });
 
     response.cookie('device_id', device_id, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'none' as const,
       maxAge: 1000 * 60 * 60 * 24 * 365,
     });
   }

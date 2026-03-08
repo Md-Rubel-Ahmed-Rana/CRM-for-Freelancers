@@ -11,6 +11,7 @@ import { ZodValidationPipe } from './common/pipes/zod-validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const expressApp = app.getHttpAdapter().getInstance();
   const port: number = app.get(ConfigService).get<number>('PORT') || 5000;
 
   app.enableCors({
@@ -25,6 +26,9 @@ async function bootstrap() {
     ],
   });
 
+  expressApp.set('trust proxy', true);
+  app.enableVersioning();
+  app.enableShutdownHooks();
   app.use(morgan('dev'));
   app.use(cookieParser());
   app.use(traceIdMiddleware);
