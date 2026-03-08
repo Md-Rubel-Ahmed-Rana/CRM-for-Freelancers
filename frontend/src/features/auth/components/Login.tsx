@@ -1,10 +1,10 @@
+import Link from "next/link";
 import LoginForm from "./LoginForm";
 import { ShieldCheck, Cookie } from "lucide-react";
 
 const Login = () => {
   return (
     <div className="w-full max-w-md shadow-lg rounded-xl p-8 space-y-6 border border-gray-200">
-      {/* Header */}
       <div className="text-center space-y-2">
         <div className="flex justify-center">
           <ShieldCheck className="w-10 h-10 text-indigo-600" />
@@ -19,7 +19,6 @@ const Login = () => {
         </p>
       </div>
 
-      {/* Cookie Notice */}
       <div className="flex items-start gap-2 text-xs bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-3 rounded-lg">
         <Cookie className="w-4 h-4 text-yellow-600 mt-0.5" />
 
@@ -28,18 +27,16 @@ const Login = () => {
         </p>
       </div>
 
-      {/* Login Form */}
       <LoginForm />
 
-      {/* Footer */}
       <div className="text-center text-sm text-gray-500 dark:text-gray-400">
         Don’t have an account?{" "}
-        <a
+        <Link
           href="/auth/register"
           className="text-indigo-600 hover:text-indigo-700 font-medium"
         >
           Create one
-        </a>
+        </Link>
       </div>
     </div>
   );

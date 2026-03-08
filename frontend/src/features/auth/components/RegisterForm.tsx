@@ -1,26 +1,35 @@
 import { useForm } from "react-hook-form";
 import { IRegister } from "../types";
 import PasswordInput from "@/components/PasswordInput";
-import { toast } from "react-toastify";
+import { handleApiMutation } from "@/utils/handleApiMutation";
+import { useUserRegisterMutation } from "../api";
+import { useRouter } from "next/router";
 
 const RegisterForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<IRegister>();
+  const router = useRouter();
 
-  const handleLogin = async (data: IRegister) => {
-    console.debug("Register form submitted:", data);
+  const [registerMutation, { isLoading }] = useUserRegisterMutation();
 
-    toast.info(
-      "Register functionality is currently under development. Please check back soon.",
+  const handleRegister = async (data: IRegister) => {
+    await handleApiMutation(
+      registerMutation,
+      data,
+      201,
+      {
+        error: "Failed to register. Please try again",
+        success: "User registered successful",
+      },
+      { isRedirect: true, path: "/dashboard", router },
     );
   };
 
   return (
-    <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
-      {/* Email */}
+    <form onSubmit={handleSubmit(handleRegister)} className="space-y-5">
       <div>
         <label className="block text-sm font-medium  mb-1">Name</label>
 
@@ -58,14 +67,12 @@ const RegisterForm = () => {
         )}
       </div>
 
-      {/* Password */}
       <PasswordInput<IRegister>
         name="password"
         register={register}
         errors={errors}
       />
 
-      {/* Forgot Password */}
       <div className="flex justify-end text-sm">
         <a
           href="/forgot-password"
@@ -75,13 +82,12 @@ const RegisterForm = () => {
         </a>
       </div>
 
-      {/* Submit */}
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isLoading}
         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition disabled:opacity-60 cursor-pointer"
       >
-        {isSubmitting ? "Registering..." : "Register"}
+        {isLoading ? "Registering..." : "Register"}
       </button>
     </form>
   );
