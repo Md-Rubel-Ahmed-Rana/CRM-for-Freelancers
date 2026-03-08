@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form";
 import { ILogin } from "../types";
 import PasswordInput from "@/components/PasswordInput";
-import { toast } from "react-toastify";
+import { useUserLoginMutation } from "../api";
+import { handleApiMutation } from "@/utils/handleApiMutation";
+import { useRouter } from "next/router";
 
 const LoginForm = () => {
   const {
@@ -9,12 +11,19 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ILogin>();
+  const [login] = useUserLoginMutation();
+  const router = useRouter();
 
   const handleLogin = async (data: ILogin) => {
-    console.debug("Login form submitted:", data);
-
-    toast.info(
-      "Login functionality is currently under development. Please check back soon.",
+    await handleApiMutation(
+      login,
+      data,
+      200,
+      {
+        error: "Failed to login. Please try again",
+        success: "User logged in successful",
+      },
+      { isRedirect: true, path: "/dashboard", router },
     );
   };
 

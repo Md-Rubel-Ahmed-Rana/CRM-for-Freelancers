@@ -1,0 +1,42 @@
+import { NextRouter } from "next/router";
+import { toast } from "react-toastify";
+import handleValidationErrors from "./handleValidationErrors";
+
+export const handleApiMutation = async <TPayload>(
+  mutationTrigger: (payload: TPayload) => Promise<any>,
+  payload: TPayload,
+  successStatusCode: number,
+  customMessages: {
+    error?: string;
+    success?: string;
+  } = {},
+  redirect: {
+    isRedirect?: boolean;
+    path?: string;
+    router?: NextRouter;
+  } = {},
+) => {
+  try {
+    const res = await mutationTrigger(payload);
+    if (res?.data?.statusCode === successStatusCode) {
+      toast.success(
+        res?.data?.message || customMessages.success || "Operation succeeded",
+      );
+      if (redirect?.isRedirect) {
+        redirect?.router?.push(redirect?.path || "/");
+      }
+    } else {
+      toast.error(
+        res?.error?.data.message || customMessages.error || "Operation failed",
+      );
+    }
+    handleValidationErrors(res);
+  } catch (err: any) {
+    toast.error(
+      err?.data?.message ||
+        err?.error ||
+        customMessages.error ||
+        "Something went wrong",
+    );
+  }
+};
