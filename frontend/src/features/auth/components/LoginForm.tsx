@@ -2,9 +2,10 @@ import { useForm } from "react-hook-form";
 import { ILogin } from "../types";
 import PasswordInput from "@/components/PasswordInput";
 import { useUserLoginMutation } from "../api";
-import { handleApiMutation } from "@/utils/handleApiMutation";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import handleValidationErrors from "@/utils/handleValidationErrors";
+import { toast } from "react-toastify";
 
 const LoginForm = () => {
   const {
@@ -16,16 +17,23 @@ const LoginForm = () => {
   const router = useRouter();
 
   const handleLogin = async (data: ILogin) => {
-    await handleApiMutation(
-      login,
-      data,
-      200,
-      {
-        error: "Failed to login. Please try again",
-        success: "User logged in successful",
-      },
-      { isRedirect: true, path: "/dashboard", router },
-    );
+    try {
+      const result = await login(data).unwrap();
+      if (result?.statusCode === 200) {
+        toast.success(result?.message || "User logged in successful");
+        router.push("/profile");
+      } else {
+        toast.error(
+          result?.error?.message ||
+            result?.error?.data?.message ||
+            result?.data?.error?.message ||
+            "Failed to login. Please try again",
+        );
+      }
+      handleValidationErrors(result);
+    } catch (error) {
+      handleValidationErrors(error);
+    }
   };
 
   return (
@@ -44,6 +52,7 @@ const LoginForm = () => {
               message: "Enter a valid email",
             },
           })}
+          disabled={isLoading}
         />
 
         {errors.email && (
@@ -55,6 +64,7 @@ const LoginForm = () => {
         name="password"
         register={register}
         errors={errors}
+        isDisabled={isLoading}
       />
 
       <div className="flex justify-end text-sm">

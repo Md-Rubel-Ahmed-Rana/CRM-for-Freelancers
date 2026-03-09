@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
 import { IRegister } from "../types";
 import PasswordInput from "@/components/PasswordInput";
-import { handleApiMutation } from "@/utils/handleApiMutation";
 import { useUserRegisterMutation } from "../api";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
+import handleValidationErrors from "@/utils/handleValidationErrors";
 
 const RegisterForm = () => {
   const {
@@ -16,16 +17,23 @@ const RegisterForm = () => {
   const [registerMutation, { isLoading }] = useUserRegisterMutation();
 
   const handleRegister = async (data: IRegister) => {
-    await handleApiMutation(
-      registerMutation,
-      data,
-      201,
-      {
-        error: "Failed to register. Please try again",
-        success: "User registered successful",
-      },
-      { isRedirect: true, path: "/dashboard", router },
-    );
+    try {
+      const result = await registerMutation(data).unwrap();
+      if (result?.statusCode === 201) {
+        toast.success(result?.message || "User registered successfully");
+        router.push("/profile");
+      } else {
+        toast.error(
+          result?.error?.message ||
+            result?.error?.data?.message ||
+            result?.data?.error?.message ||
+            "Failed to register. Please try again",
+        );
+      }
+      handleValidationErrors(result);
+    } catch (error) {
+      handleValidationErrors(error);
+    }
   };
 
   return (
@@ -71,6 +79,7 @@ const RegisterForm = () => {
         name="password"
         register={register}
         errors={errors}
+        isDisabled={isLoading}
       />
 
       <div className="flex justify-end text-sm">

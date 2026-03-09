@@ -1,36 +1,28 @@
-import { NextRouter } from "next/router";
 import { toast } from "react-toastify";
 import handleValidationErrors from "./handleValidationErrors";
 
 export const handleApiMutation = async <TPayload>(
-  mutationTrigger: (payload: TPayload) => Promise<any>,
+  mutationTrigger: (payload: TPayload) => any,
   payload: TPayload,
   successStatusCode: number,
   customMessages: {
     error?: string;
     success?: string;
   } = {},
-  redirect: {
-    isRedirect?: boolean;
-    path?: string;
-    router?: NextRouter;
-  } = {},
-) => {
+): Promise<{ success: boolean }> => {
   try {
-    const res = await mutationTrigger(payload);
-    if (res?.data?.statusCode === successStatusCode) {
+    const res = await mutationTrigger(payload).unwrap(); // ⭐ important
+
+    if (res?.statusCode === successStatusCode) {
       toast.success(
-        res?.data?.message || customMessages.success || "Operation succeeded",
+        res?.message || customMessages.success || "Operation succeeded",
       );
-      if (redirect?.isRedirect) {
-        redirect?.router?.push(redirect?.path || "/");
-      }
-    } else {
-      toast.error(
-        res?.error?.data.message || customMessages.error || "Operation failed",
-      );
+
+      return { success: true };
     }
-    handleValidationErrors(res);
+
+    toast.error(customMessages.error || "Operation failed");
+    return { success: false };
   } catch (err: any) {
     toast.error(
       err?.data?.message ||
@@ -38,5 +30,9 @@ export const handleApiMutation = async <TPayload>(
         customMessages.error ||
         "Something went wrong",
     );
+
+    handleValidationErrors(err);
+
+    return { success: false };
   }
 };

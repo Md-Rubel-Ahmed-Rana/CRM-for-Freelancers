@@ -6,7 +6,7 @@ const authApi = apiSlice.injectEndpoints({
     getLoggedInUser: builder.query({
       query: () => ({
         method: "GET",
-        url: "/auth",
+        url: "/auth/me",
       }),
       providesTags: ["auth"],
     }),
