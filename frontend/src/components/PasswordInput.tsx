@@ -13,6 +13,7 @@ type Props<T extends FieldValues> = {
   register: UseFormRegister<T>;
   errors: FieldErrors<T>;
   placeholder?: string;
+  isDisabled: boolean;
 };
 
 const PasswordInput = <T extends FieldValues>({
@@ -21,6 +22,7 @@ const PasswordInput = <T extends FieldValues>({
   register,
   errors,
   placeholder = "••••••••",
+  isDisabled = false,
 }: Props<T>) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -42,6 +44,7 @@ const PasswordInput = <T extends FieldValues>({
               message: "Password must be at least 6 characters",
             },
           })}
+          disabled={isDisabled}
         />
 
         <button

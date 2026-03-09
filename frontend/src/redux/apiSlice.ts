@@ -7,6 +7,11 @@ const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: baseApi,
     credentials: "include",
+    mode: "cors",
+    prepareHeaders: (headers) => {
+      headers.set("Content-Type", "application/json");
+      return headers;
+    },
   }),
   tagTypes: ["auth"],
   endpoints: () => ({}),

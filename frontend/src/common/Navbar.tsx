@@ -1,7 +1,10 @@
+import { useGetLoggedInUserQuery } from "@/features/auth/api";
 import Image from "next/image";
 import Link from "next/link";
 
 const Navbar = () => {
+  const { data } = useGetLoggedInUserQuery({});
+  console.log(data?.data?.user);
   return (
     <nav className="w-full border-b border-gray-500 sticky top-0 z-50">
       <div className=" px-6 py-4 flex items-center justify-between">
