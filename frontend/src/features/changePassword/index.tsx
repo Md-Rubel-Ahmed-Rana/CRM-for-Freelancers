@@ -1,5 +1,8 @@
 /* eslint-disable react-hooks/incompatible-library */
 import { useForm } from "react-hook-form";
+import { useChangePasswordMutation } from "../auth/api";
+import { handleApiMutation } from "@/utils/handleApiMutation";
+import PasswordInput from "@/components/PasswordInput";
 
 type FormValues = {
   oldPassword: string;
@@ -7,7 +10,7 @@ type FormValues = {
 };
 
 const ChangePassword = () => {
-  const isLoading = false;
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
 
   const {
     register,
@@ -24,8 +27,16 @@ const ChangePassword = () => {
 
   const oldPassword = watch("oldPassword");
 
-  const handleChangePassword = (data: FormValues) => {
-    console.log(data);
+  const samePasswordError =
+    oldPassword && watch("newPassword") === oldPassword
+      ? "New password must be different from the old password"
+      : "";
+
+  const handleChangePassword = async (data: FormValues) => {
+    await handleApiMutation(changePassword, data, 200, {
+      success: "Password changed successfully",
+      error: "Failed to change password. Please try again.",
+    });
   };
 
   return (
@@ -44,81 +55,27 @@ const ChangePassword = () => {
           onSubmit={handleSubmit(handleChangePassword)}
           className="space-y-5"
         >
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
-              Current Password
-            </label>
-            <input
-              type="password"
-              placeholder="Enter current password"
-              className={`w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition ${
-                errors.oldPassword
-                  ? "border-red-500 focus:ring-2 focus:ring-red-500/20"
-                  : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              }`}
-              {...register("oldPassword", {
-                required: "Current password is required",
-                minLength: {
-                  value: 8,
-                  message: "Current password must be at least 8 characters",
-                },
-                maxLength: {
-                  value: 15,
-                  message: "Current password must be at most 15 characters",
-                },
-              })}
-            />
-            {errors.oldPassword && (
-              <p className="mt-1.5 text-sm text-red-500">
-                {errors.oldPassword.message}
-              </p>
-            )}
-          </div>
+          <PasswordInput
+            name="oldPassword"
+            label="Current Password"
+            errors={errors}
+            register={register}
+            placeholder="Enter your old password"
+            isDisabled={isLoading}
+          />
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">
-              New Password
-            </label>
-            <input
-              type="password"
-              placeholder="Enter new password"
-              className={`w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition ${
-                errors.newPassword
-                  ? "border-red-500 focus:ring-2 focus:ring-red-500/20"
-                  : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              }`}
-              {...register("newPassword", {
-                required: "New password is required",
-                minLength: {
-                  value: 8,
-                  message: "New password must be at least 8 characters",
-                },
-                maxLength: {
-                  value: 15,
-                  message: "New password must be at most 15 characters",
-                },
-                validate: {
-                  notSameAsOld: (value) =>
-                    value !== oldPassword ||
-                    "New password must be different from current password",
-                  hasUppercase: (value) =>
-                    /[A-Z]/.test(value) ||
-                    "New password must contain at least one uppercase letter",
-                  hasLowercase: (value) =>
-                    /[a-z]/.test(value) ||
-                    "New password must contain at least one lowercase letter",
-                  hasNumber: (value) =>
-                    /\d/.test(value) ||
-                    "New password must contain at least one number",
-                },
-              })}
-            />
-            {errors.newPassword && (
-              <p className="mt-1.5 text-sm text-red-500">
-                {errors.newPassword.message}
-              </p>
-            )}
-          </div>
+          <PasswordInput
+            name="newPassword"
+            label="New Password"
+            errors={errors}
+            register={register}
+            placeholder="Enter your new password"
+            isDisabled={isLoading}
+          />
+
+          {samePasswordError && (
+            <p className="text-sm text-red-600">{samePasswordError}</p>
+          )}
 
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
@@ -131,7 +88,7 @@ const ChangePassword = () => {
             <button
               type="submit"
               disabled={!isValid || isSubmitting || isLoading}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className={`rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 ${samePasswordError ? "opacity-50" : ""} ${!isValid || isSubmitting || isLoading ? "opacity-50  cursor-not-allowed" : " cursor-pointer"} `}
             >
               {isLoading || isSubmitting ? "Updating..." : "Update Password"}
             </button>
