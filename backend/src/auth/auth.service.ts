@@ -268,6 +268,18 @@ export class AuthService {
     };
   }
 
+  async updateProfile(userId: string, data: Partial<Pick<User, 'name'>>) {
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: data,
+      omit: { password: true },
+    });
+    return {
+      data: updatedUser,
+      message: 'Profile updated successfully',
+    };
+  }
+
   private toSessionResponseDto = (session: any) => ({
     id: session.id,
     deviceId: session.device_id,

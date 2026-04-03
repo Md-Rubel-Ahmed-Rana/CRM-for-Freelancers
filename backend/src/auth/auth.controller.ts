@@ -14,7 +14,7 @@ import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LoginDto, RegisterDto } from './auth.schema';
-import { UserSession } from '@prisma/client';
+import { User, UserSession } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { ChangePasswordValidate } from './auth.validate';
 
@@ -158,6 +158,15 @@ export class AuthController {
     return {
       message: 'Logged out successfully',
     };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  async updateProfile(
+    @Req() req: any,
+    @Body() body: Partial<Pick<User, 'name'>>,
+  ) {
+    return await this.authService.updateProfile(req.user.sub, body);
   }
 
   @UseGuards(JwtAuthGuard)
