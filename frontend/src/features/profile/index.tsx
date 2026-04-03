@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { IUser } from "../auth/types";
 import { useGetLoggedInUserQuery } from "../auth/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type Props = {
@@ -17,6 +17,7 @@ type Props = {
 };
 
 const Profile = ({ setName }: Props) => {
+  const [shouldChangePassword, setShouldChangePassword] = useState(false);
   const { data } = useGetLoggedInUserQuery({});
   const user: IUser = data?.data?.user || { name: "" };
 
