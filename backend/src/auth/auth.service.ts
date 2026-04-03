@@ -72,6 +72,7 @@ export class AuthService {
 
       const tokens = await this.generateTokens(
         {
+          id: user.id,
           sub: user.id,
           email: user.email,
           name: user.name,
@@ -127,6 +128,7 @@ export class AuthService {
 
     const tokens = await this.generateTokens(
       {
+        id: user.id,
         sub: user.id,
         email: user.email,
         name: user.name,
@@ -180,6 +182,7 @@ export class AuthService {
 
     const tokens = await this.generateTokens(
       {
+        id: payload.id,
         sub: payload.id,
         email: payload.email,
         name: payload.name,
@@ -250,13 +253,18 @@ export class AuthService {
   }
 
   private async generateTokens(
-    user: { sub: string; email: string; name: string },
+    user: { id: string; sub: string; email: string; name: string },
     sessionId: string,
+    expiresIn: { access: string; refresh: string } = {
+      access: '7d',
+      refresh: '30d',
+    },
   ) {
     const accessTokenSecret = this.configService.get('JWT_ACCESS_SECRET');
     const refreshTokenSecret = this.configService.get('JWT_REFRESH_SECRET');
 
     const payload = {
+      id: user.id,
       sub: user.sub,
       email: user.email,
       name: user.name,
@@ -264,12 +272,12 @@ export class AuthService {
     };
 
     const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '15m',
+      expiresIn: expiresIn.access as any,
       secret: accessTokenSecret,
     });
 
     const refresh_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '7d',
+      expiresIn: expiresIn.refresh as any,
       secret: refreshTokenSecret,
     });
 

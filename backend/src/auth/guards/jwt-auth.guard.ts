@@ -11,6 +11,8 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
+  private readonly unauthorizedMessage =
+    'Unauthenticated access. Please login to access resource(s)';
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
@@ -25,7 +27,7 @@ export class JwtAuthGuard implements CanActivate {
     const refreshToken = request.cookies?.refresh_token;
 
     if (!accessToken) {
-      throw new UnauthorizedException('Access token missing');
+      throw new UnauthorizedException(this.unauthorizedMessage);
     }
 
     try {
@@ -33,15 +35,17 @@ export class JwtAuthGuard implements CanActivate {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
       });
 
+      console.log({ payload });
+
       request.user = payload;
       return true;
-    } catch (error) {
-      if (error.name !== 'TokenExpiredError') {
+    } catch (error: any) {
+      if (error?.name !== 'TokenExpiredError') {
         throw new UnauthorizedException();
       }
 
       if (!refreshToken) {
-        throw new UnauthorizedException('Refresh token missing');
+        throw new UnauthorizedException(this.unauthorizedMessage);
       }
 
       const refreshPayload = await this.jwtService.verifyAsync(refreshToken, {
@@ -53,17 +57,23 @@ export class JwtAuthGuard implements CanActivate {
       });
 
       if (!session || session.is_revoked) {
-        throw new UnauthorizedException('Session invalid');
+        throw new UnauthorizedException(
+          'Session invalid. Please log in again.',
+        );
       }
 
       if (!session || !session.refresh_token) {
-        throw new UnauthorizedException('Session refresh_token missing');
+        throw new UnauthorizedException(
+          'Session invalid. Please log in again.',
+        );
       }
 
       const isValid = await bcrypt.compare(refreshToken, session.refresh_token);
 
       if (!isValid) {
-        throw new UnauthorizedException('Invalid refresh token');
+        throw new UnauthorizedException(
+          'Session invalid. Please log in again.',
+        );
       }
 
       // 🔄 Rotate tokens
@@ -84,20 +94,34 @@ export class JwtAuthGuard implements CanActivate {
         },
       });
 
-      response.cookie('access_token', newAccess, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-      });
+      response.cookie(
+        'access_token',
+        newAccess,
+        this.cookieOptions(1000 * 60 * 60 * 24 * 7),
+      ); //  7 days
 
-      response.cookie('refresh_token', newRefresh, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-      });
+      response.cookie(
+        'refresh_token',
+        newRefresh,
+        this.cookieOptions(30 * 24 * 60 * 60 * 1000),
+      ); // 30 days
 
       request.user = refreshPayload;
       return true;
     }
   }
+  cookieOptions: (
+    maxAge?: number,
+    shouldUseMaxAge?: boolean,
+  ) => Record<string, any> = (
+    maxAge = 1000 * 60 * 60 * 24 * 7,
+    shouldUseMaxAge = true,
+  ) => {
+    return {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none' as const,
+      maxAge: shouldUseMaxAge ? maxAge : undefined, // by default 7 days
+    };
+  };
 }

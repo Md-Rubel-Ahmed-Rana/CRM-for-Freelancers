@@ -12,14 +12,28 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import type { LoginUserDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LoginDto, RegisterDto } from './auth.schema';
 import { UserSession } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { ChangePasswordValidate } from './auth.validate';
 
 @Controller('auth')
 export class AuthController {
+  cookieOptions: (
+    maxAge?: number,
+    shouldUseMaxAge?: boolean,
+  ) => Record<string, any> = (
+    maxAge = 1000 * 60 * 60 * 24 * 7,
+    shouldUseMaxAge = true,
+  ) => {
+    return {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none' as const,
+      maxAge: shouldUseMaxAge ? maxAge : undefined, // by default 7 days
+    };
+  };
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
@@ -52,24 +66,21 @@ export class AuthController {
       device_id,
     }: { access_token: string; refresh_token: string; device_id: string },
   ) {
-    response.cookie('access_token', access_token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none' as const,
-    });
+    response.cookie('access_token', access_token, this.cookieOptions());
 
-    response.cookie('refresh_token', refresh_token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none' as const,
-    });
+    response.cookie('refresh_token', refresh_token, this.cookieOptions());
 
-    response.cookie('device_id', device_id, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none' as const,
-      maxAge: 1000 * 60 * 60 * 24 * 365,
-    });
+    response.cookie(
+      'device_id',
+      device_id,
+      this.cookieOptions(1000 * 60 * 60 * 24 * 365),
+    ); // set 1 year for device_id to identify the device in future logins
+  }
+
+  private clearCookies(response: Response) {
+    response.clearCookie('access_token', this.cookieOptions(0, false));
+    response.clearCookie('refresh_token', this.cookieOptions(0, false));
+    response.clearCookie('device_id', this.cookieOptions(0, false));
   }
 
   @Post('login')
@@ -112,27 +123,40 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('logout-all')
   async logoutAll(@Req() req: any) {
-    return this.authService.logoutAll(req.user.id);
+    await this.authService.logoutAll(req.user.id);
+    this.clearCookies(req.res);
+    return {
+      message: 'Logged out from all devices successfully',
+    };
   }
 
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @Patch('change-password')
-  async changePassword(
-    @Req() req: any,
-    @Body() body: { oldPassword: string; newPassword: string },
-  ) {
-    return this.authService.changePassword(
-      req.user.id,
+  async changePassword(@Req() req: any, @Body() body: ChangePasswordValidate) {
+    // clear cookies
+    await this.authService.changePassword(
+      req.user.sub,
       body.oldPassword,
       body.newPassword,
     );
+    this.clearCookies(req.res);
+    return {
+      message: 'Password changed successfully. Please log in again.',
+    };
   }
 
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('logout')
   async logout(@Req() req: any) {
-    return this.authService.logout(req.user.sessionId);
+    await this.authService.logout(req.user.sessionId);
+    this.clearCookies(req.res);
+    return {
+      message: 'Logged out successfully',
+    };
   }
 }
