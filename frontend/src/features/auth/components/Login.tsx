@@ -35,7 +35,7 @@ const Login = () => {
           href="/auth/register"
           className="text-indigo-600 hover:text-indigo-700 font-medium"
         >
-          Create one
+          Sign Up
         </Link>
       </div>
     </div>

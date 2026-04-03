@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { useChangePasswordMutation } from "../auth/api";
 import { handleApiMutation } from "@/utils/handleApiMutation";
 import PasswordInput from "@/components/PasswordInput";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 type FormValues = {
   oldPassword: string;
@@ -11,6 +13,7 @@ type FormValues = {
 
 const ChangePassword = () => {
   const [changePassword, { isLoading }] = useChangePasswordMutation();
+  const router = useRouter();
 
   const {
     register,
@@ -33,19 +36,27 @@ const ChangePassword = () => {
       : "";
 
   const handleChangePassword = async (data: FormValues) => {
-    await handleApiMutation(changePassword, data, 200, {
+    const { success } = await handleApiMutation(changePassword, data, 200, {
       success: "Password changed successfully",
       error: "Failed to change password. Please try again.",
     });
+
+    if (success) {
+      window.location.href = "/auth/login";
+    } else {
+      toast.error("Failed to change password. Please try again.");
+    }
+  };
+
+  const handleCancel = () => {
+    router.push("/dashboard");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-10">
-      <div className="mx-auto w-full max-w-xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+    <div className="min-h-screen   px-4 py-10">
+      <div className="mx-auto w-full max-w-xl rounded-2xl border border-gray-200 p-6 shadow-sm sm:p-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Change Password
-          </h1>
+          <h1 className="text-2xl font-semibold">Change Password</h1>
           <p className="mt-1 text-sm text-gray-500">
             Update your password to keep your account secure.
           </p>
@@ -79,8 +90,10 @@ const ChangePassword = () => {
 
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
+              disabled={!isValid || isSubmitting || isLoading}
+              className="rounded-lg border border-gray-500 px-4 py-2 text-sm font-medium  transition hover:bg-gray-700 cursor-pointer text-white"
               type="button"
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+              onClick={handleCancel}
             >
               Cancel
             </button>

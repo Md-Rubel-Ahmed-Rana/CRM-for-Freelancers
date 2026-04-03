@@ -1,6 +1,6 @@
 import PageMetadata from "@/common/PageMetadata";
 import ChangePassword from "@/features/changePassword";
-import RootLayout from "@/layout/RootLayout";
+import DashboardLayout from "@/layout/DashboardLayout";
 import { ReactElement } from "react";
 
 const ChangePasswordPage = () => {
@@ -15,5 +15,5 @@ const ChangePasswordPage = () => {
 export default ChangePasswordPage;
 
 ChangePasswordPage.getLayout = function (page: ReactElement) {
-  return <RootLayout>{page}</RootLayout>;
+  return <DashboardLayout component={page} />;
 };
