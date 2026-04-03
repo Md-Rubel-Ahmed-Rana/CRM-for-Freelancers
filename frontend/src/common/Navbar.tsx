@@ -3,6 +3,7 @@ import { IUser } from "@/features/auth/types";
 import Image from "next/image";
 import Link from "next/link";
 import Logout from "./Logout";
+import { UserCircle } from "lucide-react";
 
 const Navbar = () => {
   const { data } = useGetLoggedInUserQuery({});
@@ -32,6 +33,12 @@ const Navbar = () => {
 
           {user && user.id ? (
             <>
+              <Link
+                href="/profile"
+                className="flex items-center gap-1 hover:text-blue-600"
+              >
+                <UserCircle size={24} />
+              </Link>
               <Logout />
             </>
           ) : (

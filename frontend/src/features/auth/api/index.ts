@@ -28,7 +28,7 @@ const authApi = apiSlice.injectEndpoints({
     }),
     logout: builder.mutation({
       query: () => ({
-        method: "DELETE",
+        method: "POST",
         url: "/auth/logout",
       }),
       invalidatesTags: ["auth"],
