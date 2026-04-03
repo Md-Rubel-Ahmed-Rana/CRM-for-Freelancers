@@ -35,7 +35,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
           success: true,
           message,
           traceId: request['traceId'],
-          data: data.data && data.meta ? data : data.data,
+          data,
         };
       }),
     );
