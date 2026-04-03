@@ -72,6 +72,7 @@ export class AuthService {
 
       const tokens = await this.generateTokens(
         {
+          id: user.id,
           sub: user.id,
           email: user.email,
           name: user.name,
@@ -127,6 +128,7 @@ export class AuthService {
 
     const tokens = await this.generateTokens(
       {
+        id: user.id,
         sub: user.id,
         email: user.email,
         name: user.name,
@@ -180,6 +182,7 @@ export class AuthService {
 
     const tokens = await this.generateTokens(
       {
+        id: payload.id,
         sub: payload.id,
         email: payload.email,
         name: payload.name,
@@ -245,18 +248,62 @@ export class AuthService {
 
     // revoke all sessions after password change
     await this.logoutAll(userId);
-
-    return { message: 'Password changed successfully' };
   }
 
+  async getAllSessions(userId: string, isRevoked = false) {
+    const sessions = await this.prisma.userSession.findMany({
+      where: { user_id: userId, is_revoked: isRevoked },
+    });
+
+    const sortedSessions = sessions
+      .map(this.toSessionResponseDto)
+      .sort((a, b) => {
+        if (a.status === 'active' && b.status === 'revoked') return -1;
+        if (a.status === 'revoked' && b.status === 'active') return 1;
+        return 0;
+      });
+    return {
+      data: sortedSessions,
+      message: 'Sessions retrieved successfully',
+    };
+  }
+
+  async updateProfile(userId: string, data: Partial<Pick<User, 'name'>>) {
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: data,
+      omit: { password: true },
+    });
+    return {
+      data: updatedUser,
+      message: 'Profile updated successfully',
+    };
+  }
+
+  private toSessionResponseDto = (session: any) => ({
+    id: session.id,
+    deviceId: session.device_id,
+    deviceName: session.user_agent,
+    ipAddress: session.ip_address,
+    createdAt: session.created_at,
+    lastActiveAt: session.updated_at,
+    expiresAt: session.expires_at,
+    status: session.is_revoked ? 'revoked' : 'active',
+  });
+
   private async generateTokens(
-    user: { sub: string; email: string; name: string },
+    user: { id: string; sub: string; email: string; name: string },
     sessionId: string,
+    expiresIn: { access: string; refresh: string } = {
+      access: '7d',
+      refresh: '30d',
+    },
   ) {
     const accessTokenSecret = this.configService.get('JWT_ACCESS_SECRET');
     const refreshTokenSecret = this.configService.get('JWT_REFRESH_SECRET');
 
     const payload = {
+      id: user.id,
       sub: user.sub,
       email: user.email,
       name: user.name,
@@ -264,12 +311,12 @@ export class AuthService {
     };
 
     const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '15m',
+      expiresIn: expiresIn.access as any,
       secret: accessTokenSecret,
     });
 
     const refresh_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '7d',
+      expiresIn: expiresIn.refresh as any,
       secret: refreshTokenSecret,
     });
 
