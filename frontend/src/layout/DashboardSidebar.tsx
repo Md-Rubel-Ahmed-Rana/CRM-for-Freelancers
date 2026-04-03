@@ -6,6 +6,7 @@ import {
   Bell,
   ClipboardList,
   Settings,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -39,6 +40,11 @@ const sidebarItems = [
     name: "Logs",
     path: "/logs",
     icon: <ClipboardList size={20} />,
+  },
+  {
+    name: "Activities",
+    path: "/activities",
+    icon: <Activity size={20} />,
   },
   {
     name: "Settings",
