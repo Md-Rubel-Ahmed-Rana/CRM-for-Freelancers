@@ -12,37 +12,37 @@ import Link from "next/link";
 const sidebarItems = [
   {
     name: "Profile",
-    path: "profile",
+    path: "/profile",
     icon: <UserCircle2 size={20} />,
   },
   {
     name: "Dashboard",
-    path: "dashboard",
+    path: "/dashboard",
     icon: <LayoutDashboard size={20} />,
   },
   {
     name: "Clients",
-    path: "clients",
+    path: "/clients",
     icon: <Users size={20} />,
   },
   {
     name: "Projects",
-    path: "projects",
+    path: "/projects",
     icon: <FolderKanban size={20} />,
   },
   {
     name: "Reminders",
-    path: "reminders",
+    path: "/reminders",
     icon: <Bell size={20} />,
   },
   {
     name: "Logs",
-    path: "logs",
+    path: "/logs",
     icon: <ClipboardList size={20} />,
   },
   {
     name: "Settings",
-    path: "settings",
+    path: "/settings",
     icon: <Settings size={20} />,
   },
 ];
@@ -57,7 +57,7 @@ const DashboardSidebar = () => {
       <nav className="space-y-2 px-4 pb-6">
         {sidebarItems.map((item) => (
           <Link href={item.path} key={item.path}>
-            <button className="w-full rounded-xl px-4 py-3 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-zinc-800">
+            <button className="w-full rounded-xl px-4 py-3 text-left text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-zinc-800 cursor-pointer">
               <div className="flex items-center gap-3">
                 {item.icon}
                 {item.name}
