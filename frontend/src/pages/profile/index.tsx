@@ -1,6 +1,6 @@
 import PageMetadata from "@/common/PageMetadata";
 import Profile from "@/features/profile";
-import RootLayout from "@/layout/RootLayout";
+import DashboardLayout from "@/layout/DashboardLayout";
 import { ReactElement, useState } from "react";
 
 const ProfilePage = () => {
@@ -16,5 +16,5 @@ const ProfilePage = () => {
 export default ProfilePage;
 
 ProfilePage.getLayout = function (page: ReactElement) {
-  return <RootLayout>{page}</RootLayout>;
+  return <DashboardLayout component={page} />;
 };
