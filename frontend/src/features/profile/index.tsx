@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { IUser } from "../auth/types";
 import { useGetLoggedInUserQuery } from "../auth/api";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 
 type Props = {
@@ -17,7 +17,6 @@ type Props = {
 };
 
 const Profile = ({ setName }: Props) => {
-  const [shouldChangePassword, setShouldChangePassword] = useState(false);
   const { data } = useGetLoggedInUserQuery({});
   const user: IUser = data?.data?.user || { name: "" };
 
@@ -27,24 +26,8 @@ const Profile = ({ setName }: Props) => {
     }
   }, [user]);
 
-  const initials = user?.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-
   return (
-    <div className=" shadow-lg rounded-xl border border-gray-200 dark:border-zinc-800">
-      <div className="flex items-center gap-5 p-2 border-b border-gray-200 dark:border-zinc-800">
-        <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-semibold">
-          {initials}
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold">{user.name}</h2>
-        </div>
-      </div>
-
+    <div className="shadow-lg rounded-md border border-gray-200 dark:border-zinc-800">
       <div className="p-6 grid md:grid-cols-2 gap-6">
         <div className="flex items-center gap-3">
           <Mail className="w-5 h-5 text-gray-500" />
@@ -107,7 +90,7 @@ const Profile = ({ setName }: Props) => {
       <div className="p-6 border-t border-gray-200 dark:border-zinc-800 flex gap-3">
         <Link
           href="/profile/edit"
-          className="px-4 py-2 border  rounded-lg bg-blue-600 hover:bg-blue-700 transition text-white"
+          className="px-4 py-2  rounded-lg bg-blue-600 hover:bg-blue-700 transition text-white"
         >
           Edit Profile
         </Link>

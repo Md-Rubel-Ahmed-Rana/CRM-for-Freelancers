@@ -19,6 +19,7 @@ const LoginForm = () => {
   const handleLogin = async (data: ILogin) => {
     try {
       const result = await login(data).unwrap();
+      console.log({ result });
       if (result?.statusCode === 200) {
         toast.success(result?.message || "User logged in successful");
         router.push("/profile");
@@ -31,7 +32,13 @@ const LoginForm = () => {
         );
       }
       handleValidationErrors(result);
-    } catch (error) {
+    } catch (error: any) {
+      toast.error(
+        error?.message ||
+          error?.data?.message ||
+          error?.message ||
+          "Failed to login. Please try again",
+      );
       handleValidationErrors(error);
     }
   };

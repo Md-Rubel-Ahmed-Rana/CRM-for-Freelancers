@@ -17,7 +17,7 @@ const DashboardLayout = ({ component }: Props) => {
           <DashboardHeader />
 
           {/* // dynamic content  */}
-          <main className="flex-1 p-2 sm:p-6">{component}</main>
+          <main className="flex-1 p-2">{component}</main>
         </div>
       </div>
     </div>

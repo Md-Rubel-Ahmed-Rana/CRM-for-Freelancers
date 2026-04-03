@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { useChangePasswordMutation } from "../auth/api";
 import { handleApiMutation } from "@/utils/handleApiMutation";
 import PasswordInput from "@/components/PasswordInput";
-import Link from "next/link";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 type FormValues = {
   oldPassword: string;
@@ -12,6 +13,7 @@ type FormValues = {
 
 const ChangePassword = () => {
   const [changePassword, { isLoading }] = useChangePasswordMutation();
+  const router = useRouter();
 
   const {
     register,
@@ -34,10 +36,20 @@ const ChangePassword = () => {
       : "";
 
   const handleChangePassword = async (data: FormValues) => {
-    await handleApiMutation(changePassword, data, 200, {
+    const { success } = await handleApiMutation(changePassword, data, 200, {
       success: "Password changed successfully",
       error: "Failed to change password. Please try again.",
     });
+
+    if (success) {
+      window.location.href = "/auth/login";
+    } else {
+      toast.error("Failed to change password. Please try again.");
+    }
+  };
+
+  const handleCancel = () => {
+    router.push("/dashboard");
   };
 
   return (
@@ -77,14 +89,14 @@ const ChangePassword = () => {
           )}
 
           <div className="flex items-center justify-end gap-3 pt-2">
-            <Link
-              href="/dashboard"
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+            <button
+              disabled={!isValid || isSubmitting || isLoading}
+              className="rounded-lg border border-gray-500 px-4 py-2 text-sm font-medium  transition hover:bg-gray-700 cursor-pointer text-white"
+              type="button"
+              onClick={handleCancel}
             >
-              <button className="cursor-pointer" type="button">
-                Cancel
-              </button>
-            </Link>
+              Cancel
+            </button>
 
             <button
               type="submit"
