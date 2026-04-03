@@ -159,4 +159,11 @@ export class AuthController {
       message: 'Logged out successfully',
     };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('sessions')
+  async getAllSessions(@Req() req: any) {
+    const isRevoked = req.query.isRevoked === 'true';
+    return await this.authService.getAllSessions(req.user.sub, isRevoked);
+  }
 }
