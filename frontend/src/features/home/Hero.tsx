@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const HeroSection = () => {
   return (
@@ -15,13 +16,19 @@ const HeroSection = () => {
         </p>
 
         <div className="mt-8 flex justify-center gap-4">
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+          <Link
+            href="/auth/register"
+            className="inline-block bg-blue-500 text-white font-semibold px-8 py-3 rounded-md hover:bg-blue-700 transition"
+          >
             Get Started Free
-          </button>
+          </Link>
 
-          <button className="px-6 py-3 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+          <Link
+            href="/demo"
+            className="px-6 py-3 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-white transition"
+          >
             View Demo
-          </button>
+          </Link>
         </div>
 
         <div className="mt-16 flex justify-center">

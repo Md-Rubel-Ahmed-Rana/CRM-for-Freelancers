@@ -21,12 +21,12 @@ const Navbar = () => {
           <span className="text-xl font-bold tracking-tight">MiniCRM</span>
         </Link>
 
-        <div className="flex items-center gap-6 text-sm">
-          <Link href="#features" className="hover:text-blue-600">
+        <div className="flex items-center gap-6 text-sm text-semibold">
+          <Link href="/features" className="hover:text-blue-600">
             Features
           </Link>
 
-          <Link href="#workflow" className="hover:text-blue-600">
+          <Link href="/how-to-works" className="hover:text-blue-600">
             How it works
           </Link>
 
