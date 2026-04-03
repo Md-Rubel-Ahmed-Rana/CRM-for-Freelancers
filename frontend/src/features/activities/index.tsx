@@ -1,5 +1,11 @@
+import Sessions from "../auth/components/Sessions";
+
 const Activities = () => {
-  return <div>Activities will be shown here</div>;
+  return (
+    <div>
+      <Sessions />
+    </div>
+  );
 };
 
 export default Activities;

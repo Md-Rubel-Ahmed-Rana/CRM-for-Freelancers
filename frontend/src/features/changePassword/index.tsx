@@ -90,7 +90,7 @@ const ChangePassword = () => {
 
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
-              disabled={!isValid || isSubmitting || isLoading}
+              disabled={isSubmitting || isLoading}
               className="rounded-lg border border-gray-500 px-4 py-2 text-sm font-medium  transition hover:bg-gray-700 cursor-pointer text-white"
               type="button"
               onClick={handleCancel}

@@ -41,6 +41,13 @@ const authApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["auth"],
     }),
+    getSessions: builder.query({
+      query: () => ({
+        method: "GET",
+        url: "/auth/sessions",
+      }),
+      providesTags: ["auth"],
+    }),
   }),
 });
 
@@ -50,4 +57,5 @@ export const {
   useLogoutMutation,
   useChangePasswordMutation,
   useUserRegisterMutation,
+  useGetSessionsQuery,
 } = authApi;
