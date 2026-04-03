@@ -3,9 +3,10 @@ import { IUser } from "@/features/auth/types";
 import Image from "next/image";
 import Link from "next/link";
 import Logout from "./Logout";
+import { LoaderCircle, UserCircle } from "lucide-react";
 
 const Navbar = () => {
-  const { data } = useGetLoggedInUserQuery({});
+  const { data, isLoading } = useGetLoggedInUserQuery({});
   const user: IUser = data?.data?.user || {};
   return (
     <nav className="w-full border-b border-gray-500 sticky top-0 z-50">
@@ -21,29 +22,40 @@ const Navbar = () => {
           <span className="text-xl font-bold tracking-tight">MiniCRM</span>
         </Link>
 
-        <div className="flex items-center gap-6 text-sm">
-          <Link href="#features" className="hover:text-blue-600">
+        <div className="flex items-center gap-6 text-sm text-semibold">
+          <Link href="/features" className="hover:text-blue-600">
             Features
           </Link>
 
-          <Link href="#workflow" className="hover:text-blue-600">
+          <Link href="/how-to-works" className="hover:text-blue-600">
             How it works
           </Link>
-
-          {user && user.id ? (
-            <>
-              <Logout />
-            </>
+          {isLoading ? (
+            <LoaderCircle className="animate-spin h-6 w-6 text-gray-600" />
           ) : (
             <>
-              <Link href="/auth/login">Login</Link>
+              {user && user.id ? (
+                <>
+                  <Link
+                    href="/profile"
+                    className="flex items-center gap-1 hover:text-blue-600"
+                  >
+                    <UserCircle size={24} />
+                  </Link>
+                  <Logout />
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/login">Login</Link>
 
-              <Link
-                href="/auth/register"
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-              >
-                Sign Up
-              </Link>
+                  <Link
+                    href="/auth/register"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </>
           )}
         </div>

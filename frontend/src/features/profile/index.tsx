@@ -9,13 +9,15 @@ import {
 } from "lucide-react";
 import { IUser } from "../auth/types";
 import { useGetLoggedInUserQuery } from "../auth/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type Props = {
   setName: (name: string) => void;
 };
 
 const Profile = ({ setName }: Props) => {
+  const [shouldChangePassword, setShouldChangePassword] = useState(false);
   const { data } = useGetLoggedInUserQuery({});
   const user: IUser = data?.data?.user || { name: "" };
 
@@ -106,13 +108,19 @@ const Profile = ({ setName }: Props) => {
         </div>
 
         <div className="p-6 border-t border-gray-200 dark:border-zinc-800 flex gap-3">
-          <button className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+          <Link
+            href="/profile/edit"
+            className="px-4 py-2 border  rounded-lg bg-blue-600 hover:bg-blue-700 transition text-white"
+          >
             Edit Profile
-          </button>
+          </Link>
 
-          <button className="px-4 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition">
+          <Link
+            href="/profile/change-password"
+            className="px-4 py-2 border border-gray-300 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-800 transition hover:text-white"
+          >
             Change Password
-          </button>
+          </Link>
         </div>
       </div>
     </div>

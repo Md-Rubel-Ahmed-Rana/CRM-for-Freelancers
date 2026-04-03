@@ -16,9 +16,13 @@ const features = [
   },
 ];
 
-const FeaturesSection = () => {
+type Props = {
+  paddingY?: string;
+};
+
+const FeaturesSection = ({ paddingY = "py-24" }: Props) => {
   return (
-    <section id="features" className="py-24">
+    <section id="features" className={paddingY}>
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Title */}
         <div className="text-center max-w-2xl mx-auto">
