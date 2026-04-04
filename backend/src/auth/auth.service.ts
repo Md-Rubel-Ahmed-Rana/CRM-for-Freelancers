@@ -148,10 +148,15 @@ export class AuthService {
   }
 
   async getUserProfile(id: string) {
-    return await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id },
       omit: { password: true },
     });
+    if (!user) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'User not found');
+    }
+
+    return user;
   }
 
   async refreshToken(refreshToken: string) {

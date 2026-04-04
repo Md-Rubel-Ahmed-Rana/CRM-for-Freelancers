@@ -22,6 +22,9 @@
     "migrate:create": "prisma migrate dev --create-only",
     "migrate:deploy": "prisma migrate deploy",
     "generate": "prisma generate",
+    "db:pull": "npx prisma db pull",
+    "migrate:init": "npx prisma migrate dev --name init --create-only",
+    "migrate:reset": "npx prisma migrate reset",
     "studio": "npx prisma studio"
   },
   "dependencies": {
