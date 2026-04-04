@@ -8,6 +8,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { ClientsModule } from './clients/clients.module';
 import { ProjectsModule } from './projects/projects.module';
 import { InteractionsModule } from './interactions/interactions.module';
+import { RemindersModule } from './reminders/reminders.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { InteractionsModule } from './interactions/interactions.module';
     ClientsModule,
     ProjectsModule,
     InteractionsModule,
+    RemindersModule,
   ],
   controllers: [AppController],
 })

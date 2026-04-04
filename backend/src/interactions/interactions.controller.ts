@@ -43,18 +43,6 @@ export class InteractionsController {
     return this.interactionsService.findAll(userId, query);
   }
 
-  @Get('client/:clientId')
-  getByClient(@Req() req: any, @Param('clientId') clientId: string) {
-    const userId = req.user.id;
-    return this.interactionsService.getByClient(userId, clientId);
-  }
-
-  @Get('project/:projectId')
-  getByProject(@Req() req: any, @Param('projectId') projectId: string) {
-    const userId = req.user.id;
-    return this.interactionsService.getByProject(userId, projectId);
-  }
-
   @Get(':id')
   findOne(@Req() req: any, @Param('id') id: string) {
     const userId = req.user.id;
