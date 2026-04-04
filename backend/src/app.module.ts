@@ -4,6 +4,11 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { ClientsModule } from './clients/clients.module';
+import { ProjectsModule } from './projects/projects.module';
+import { InteractionsModule } from './interactions/interactions.module';
+import { RemindersModule } from './reminders/reminders.module';
 
 @Module({
   imports: [
@@ -11,6 +16,11 @@ import { AuthModule } from './auth/auth.module';
     PrismaModule,
     UsersModule,
     AuthModule,
+    DashboardModule,
+    ClientsModule,
+    ProjectsModule,
+    InteractionsModule,
+    RemindersModule,
   ],
   controllers: [AppController],
 })
