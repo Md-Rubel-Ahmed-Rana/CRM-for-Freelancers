@@ -22,7 +22,7 @@ const LoginForm = () => {
       console.log({ result });
       if (result?.statusCode === 200) {
         toast.success(result?.message || "User logged in successful");
-        router.push("/profile");
+        router.push("/dashboard");
       } else {
         toast.error(
           result?.error?.message ||
