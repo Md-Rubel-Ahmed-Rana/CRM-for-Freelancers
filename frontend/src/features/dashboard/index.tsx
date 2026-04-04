@@ -1,81 +1,105 @@
+import { useGetDashboardDataQuery } from "./api";
+import SummaryCards from "./SummaryCards";
+import DashboardSummaryHeader from "./DashboardSummaryHeader";
+import LoadingSkeleton from "./LoadingSkeleton";
+import ErrorDisplayer from "./ErrorDisplayer";
+import QuickInsights from "./QuickInsights";
+import UpcomingReminders from "./UpcomingReminders";
+import DashboardCharts from "./DashboardCharts";
+
+type TReminder = {
+  id: string;
+  title: string;
+  description: string;
+  due_date: string;
+  is_completed: boolean;
+};
+
+type TProjectStatusItem = {
+  status: string;
+  count: number;
+};
+
+type TDashboardResponse = {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  traceId: string;
+  data: {
+    data: {
+      summary: {
+        totalClients: number;
+        totalProjects: number;
+        totalDueReminders: number;
+        totalActiveProjects: number;
+      };
+      upcomingReminders: TReminder[];
+      projectsByStatus: TProjectStatusItem[];
+      chartsData: {
+        projectStatusPie: {
+          labels: string[];
+          series: number[];
+        };
+        remindersDueByDay: {
+          labels: string[];
+          series: number[];
+        };
+        projectsCreatedByMonth: {
+          labels: string[];
+          series: number[];
+        };
+      };
+    };
+  };
+};
+
+const cardBase =
+  "rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all dark:border-zinc-800 dark:bg-zinc-900";
+
 const Dashboard = () => {
+  const { data, error, isLoading } = useGetDashboardDataQuery({}) as {
+    data?: TDashboardResponse;
+    error?: any;
+    isLoading: boolean;
+  };
+
+  const dashboard = data?.data?.data;
+
+  const summary = dashboard?.summary;
+  const upcomingReminders = dashboard?.upcomingReminders ?? [];
+  const projectsByStatus = dashboard?.projectsByStatus ?? [];
+  const chartsData = dashboard?.chartsData;
+
+  if (isLoading) {
+    return <LoadingSkeleton cardBase={cardBase} />;
+  }
+
+  if (error || !dashboard) {
+    return <ErrorDisplayer />;
+  }
+
   return (
-    <div>
-      {/* Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Total Clients
-          </p>
-          <h2 className="mt-2 text-3xl font-bold">24</h2>
-        </div>
+    <div className="space-y-2">
+      <DashboardSummaryHeader />
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Total Projects
-          </p>
-          <h2 className="mt-2 text-3xl font-bold">12</h2>
-        </div>
+      <SummaryCards cardBase={cardBase} summary={dashboard?.summary} />
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Reminders Due
-          </p>
-          <h2 className="mt-2 text-3xl font-bold">5</h2>
-        </div>
-
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Active Projects
-          </p>
-          <h2 className="mt-2 text-3xl font-bold">8</h2>
-        </div>
-      </div>
-
-      {/* Lower content */}
-      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
-        {/* Main content */}
-        <div className="xl:col-span-2">
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-            <h3 className="text-lg font-semibold">Dashboard Content</h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Put your charts, client summary, recent projects, and activity
-              logs here.
-            </p>
-
-            <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="rounded-xl bg-gray-100 p-4 dark:bg-zinc-800">
-                Recent Clients
-              </div>
-              <div className="rounded-xl bg-gray-100 p-4 dark:bg-zinc-800">
-                Project Status
-              </div>
-              <div className="rounded-xl bg-gray-100 p-4 dark:bg-zinc-800">
-                Weekly Logs
-              </div>
-              <div className="rounded-xl bg-gray-100 p-4 dark:bg-zinc-800">
-                Revenue / Budget
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <DashboardCharts
+          summary={summary}
+          projectsByStatus={projectsByStatus}
+          chartsData={chartsData}
+          cardBase={cardBase}
+        />
 
         {/* Right panel */}
-        <div>
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-            <h3 className="text-lg font-semibold">Upcoming Reminders</h3>
-            <div className="mt-4 space-y-3">
-              <div className="rounded-xl bg-gray-100 p-4 dark:bg-zinc-800">
-                Client meeting at 4 PM
-              </div>
-              <div className="rounded-xl bg-gray-100 p-4 dark:bg-zinc-800">
-                Submit project proposal
-              </div>
-              <div className="rounded-xl bg-gray-100 p-4 dark:bg-zinc-800">
-                Follow up with new lead
-              </div>
-            </div>
-          </div>
+        <div className="space-y-6">
+          <UpcomingReminders
+            upcomingReminders={upcomingReminders}
+            cardBase={cardBase}
+          />
+
+          <QuickInsights cardBase={cardBase} summary={summary} />
         </div>
       </div>
     </div>
