@@ -1,12 +1,3 @@
-// generator client {
-//   provider = "prisma-client-js"
-// }
-
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,19 +9,22 @@ datasource db {
 }
 
 model User {
-  id            String       @id @default(uuid())
-  name          String
-  email         String       @unique
-  password      String?
-  has_password  Boolean      @default(false)
-  auth_provider AuthProvider @default(credentials)
-  is_active     Boolean      @default(true)
-
+  id              String           @id @default(uuid())
+  name            String
+  email           String           @unique
+  password        String?
+  has_password    Boolean          @default(false)
+  auth_provider   AuthProvider     @default(credentials)
+  is_active       Boolean          @default(true)
   last_login_at   DateTime?
-  created_at      DateTime        @default(now())
-  updated_at      DateTime        @updatedAt
-  sessions        UserSession[]
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
   password_resets PasswordReset[]
+  sessions        UserSession[]
+  clients         Client[]
+  projects        Project[]
+  interactionLogs InteractionLog[]
+  reminders       Reminder[]
 
   @@map("users")
 }
@@ -46,8 +40,7 @@ model UserSession {
   expires_at    DateTime
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
-
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("sessions")
@@ -61,11 +54,122 @@ model PasswordReset {
   used       Boolean  @default(false)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("password_resets")
+}
+
+model Client {
+  id      String @id @default(uuid())
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  name    String
+  email   String
+  phone   String
+  company String?
+  notes   String?
+
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  projects        Project[]
+  interactionLogs InteractionLog[]
+  reminders       Reminder[]
+
+  @@index([user_id])
+  @@map("clients")
+}
+
+model Project {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  client_id String
+  client    Client @relation(fields: [client_id], references: [id])
+
+  title    String
+  budget   Decimal
+  deadline DateTime
+  status   ProjectStatus
+
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  interactionLogs InteractionLog[]
+  reminders       Reminder[]
+
+  @@index([user_id])
+  @@index([client_id])
+  @@map("projects")
+}
+
+model InteractionLog {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  client_id String
+  client    Client @relation(fields: [client_id], references: [id])
+
+  project_id String
+  project    Project @relation(fields: [project_id], references: [id])
+
+  type  InteractionType
+  notes String
+  date  DateTime
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([user_id])
+  @@index([client_id])
+  @@index([project_id])
+  @@map("interaction_logs")
+}
+
+model Reminder {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  client_id String
+  client    Client @relation(fields: [client_id], references: [id])
+
+  project_id String?
+  project    Project? @relation(fields: [project_id], references: [id])
+
+  title        String
+  description  String
+  due_date     DateTime
+  is_completed Boolean  @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([user_id])
+  @@index([client_id])
+  @@index([project_id])
+  @@index([due_date])
+  @@map("reminders")
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum InteractionType {
+  CALL
+  MEETING
+  EMAIL
+  OTHER
 }
 
 enum AuthProvider {
