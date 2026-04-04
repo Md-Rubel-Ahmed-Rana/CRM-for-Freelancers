@@ -7,12 +7,17 @@ export class InteractionsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(userId: string, payload: InteractionLog) {
-    return await this.prisma.interactionLog.create({
+    await this.prisma.interactionLog.create({
       data: {
         ...payload,
         user_id: userId,
       },
     });
+
+    return {
+      message: 'Interaction log created successfully',
+      data: payload,
+    };
   }
 
   async findAll(
@@ -61,13 +66,14 @@ export class InteractionsService {
     ]);
 
     return {
+      message: 'Interactions retrieved successfully',
       meta: {
         page,
         limit,
         total,
         totalPage: Math.ceil(total / limit),
       },
-      data,
+      data: data,
     };
   }
 
@@ -87,7 +93,10 @@ export class InteractionsService {
       throw new NotFoundException('Interaction not found');
     }
 
-    return interaction;
+    return {
+      message: 'Interaction retrieved successfully',
+      data: interaction,
+    };
   }
 
   async update(
@@ -95,40 +104,27 @@ export class InteractionsService {
     id: string,
     payload: Prisma.InteractionLogUpdateInput,
   ) {
-    // check ownership
     await this.findOne(userId, id);
 
-    return this.prisma.interactionLog.update({
+    await this.prisma.interactionLog.update({
       where: { id },
       data: payload,
     });
+
+    return {
+      message: 'Interaction updated successfully',
+    };
   }
 
   async remove(userId: string, id: string) {
     await this.findOne(userId, id);
 
-    return this.prisma.interactionLog.delete({
+    await this.prisma.interactionLog.delete({
       where: { id },
     });
-  }
 
-  async getByProject(userId: string, projectId: string) {
-    return await this.prisma.interactionLog.findMany({
-      where: {
-        user_id: userId,
-        project_id: projectId,
-      },
-      orderBy: { date: 'desc' },
-    });
-  }
-
-  async getByClient(userId: string, clientId: string) {
-    return await this.prisma.interactionLog.findMany({
-      where: {
-        user_id: userId,
-        client_id: clientId,
-      },
-      orderBy: { date: 'desc' },
-    });
+    return {
+      message: 'Interaction deleted successfully',
+    };
   }
 }
