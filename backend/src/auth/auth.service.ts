@@ -285,6 +285,35 @@ export class AuthService {
     };
   }
 
+  async revokeOtherSession(currentUserId: string, targetSessionId: string) {
+    const session = await this.prisma.userSession.findFirst({
+      where: {
+        id: targetSessionId,
+        user_id: currentUserId,
+      },
+    });
+
+    if (!session) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Session was not found');
+    }
+
+    if (session.is_revoked) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Session is already revoked');
+    }
+
+    await this.prisma.userSession.update({
+      where: { id: targetSessionId },
+      data: {
+        is_revoked: true,
+        refresh_token: null,
+      },
+    });
+
+    return {
+      message: 'The session has been revoked successfully',
+    };
+  }
+
   private toSessionResponseDto = (session: any) => ({
     id: session.id,
     deviceId: session.device_id,
