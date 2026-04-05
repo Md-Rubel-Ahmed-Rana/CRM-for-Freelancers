@@ -147,7 +147,7 @@ export class AuthService {
     };
   }
 
-  async getUserProfile(id: string) {
+  async getUserProfile(id: string, sessionId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       omit: { password: true },
@@ -156,7 +156,7 @@ export class AuthService {
       throw new ApiError(HttpStatus.NOT_FOUND, 'User not found');
     }
 
-    return user;
+    return { ...user, session_id: sessionId };
   }
 
   async refreshToken(refreshToken: string) {
