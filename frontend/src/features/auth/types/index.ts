@@ -11,6 +11,7 @@ export type IRegister = {
 
 export type IUser = {
   id: string;
+  session_id: string;
   name: string;
   email: string;
   has_password: boolean;
@@ -19,15 +20,4 @@ export type IUser = {
   last_login_at: string;
   created_at: string;
   updated_at: string;
-};
-
-export type ISession = {
-  id: string;
-  deviceId: string;
-  deviceName: string;
-  ipAddress: string;
-  createdAt: string;
-  lastActiveAt: string;
-  expiresAt: string;
-  status: "active" | "revoked" | "expired";
 };
