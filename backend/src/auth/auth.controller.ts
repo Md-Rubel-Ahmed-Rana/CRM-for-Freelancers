@@ -9,6 +9,7 @@ import {
   Res,
   HttpStatus,
   HttpCode,
+  Param,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
@@ -177,5 +178,11 @@ export class AuthController {
   async getAllSessions(@Req() req: any) {
     const isRevoked = req.query.isRevoked === 'true';
     return await this.authService.getAllSessions(req.user.sub, isRevoked);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('sessions/:id/revoke')
+  async revokeOtherSession(@Req() req: any, @Param('id') sessionId: string) {
+    return this.authService.revokeOtherSession(req.user.id, sessionId);
   }
 }
