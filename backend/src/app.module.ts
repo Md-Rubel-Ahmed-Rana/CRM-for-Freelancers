@@ -9,6 +9,7 @@ import { ClientsModule } from './clients/clients.module';
 import { ProjectsModule } from './projects/projects.module';
 import { InteractionsModule } from './interactions/interactions.module';
 import { RemindersModule } from './reminders/reminders.module';
+import { CleanupService } from './common/services/cleanup.service';
 
 @Module({
   imports: [
@@ -23,5 +24,6 @@ import { RemindersModule } from './reminders/reminders.module';
     RemindersModule,
   ],
   controllers: [AppController],
+  providers: [CleanupService],
 })
 export class AppModule {}
