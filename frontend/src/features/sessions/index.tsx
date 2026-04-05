@@ -35,7 +35,7 @@ const Sessions = ({ currentSessionId }: Props) => {
         </div>
 
         <div className="inline-flex w-fit items-center rounded-xl bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 dark:bg-zinc-800 dark:text-gray-200">
-          Total Sessions: {sessions.length}
+          Logout from all Devices
         </div>
       </div>
 

@@ -40,11 +40,6 @@ const sidebarItems = [
     path: "/logs",
     icon: <ClipboardList size={20} />,
   },
-  {
-    name: "Settings",
-    path: "/settings",
-    icon: <Settings size={20} />,
-  },
 ];
 
 const DashboardSidebar = () => {
