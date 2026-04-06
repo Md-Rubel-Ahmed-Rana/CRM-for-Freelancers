@@ -1,18 +1,6 @@
 const ClientLoadingSkeleton = () => {
   return (
     <section className="space-y-2">
-      <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
-        <div>
-          <div className="h-6 w-32 animate-pulse rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-          <div className="mt-2 h-4 w-72 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
-        </div>
-
-        <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
-          <div className="h-11 w-full animate-pulse rounded-xl bg-zinc-200 sm:w-[320px] dark:bg-zinc-800" />
-          <div className="h-11 w-full animate-pulse rounded-xl bg-zinc-200 sm:w-28 dark:bg-zinc-800" />
-        </div>
-      </div>
-
       <div className="hidden overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 xl:block">
         <div className="overflow-x-auto">
           <table className="min-w-full">

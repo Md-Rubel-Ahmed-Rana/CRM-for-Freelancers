@@ -22,9 +22,7 @@ const InteractionLogs = () => {
   const meta = data?.data?.meta;
   const [searchTerm, setSearchTerm] = useState("");
 
-  if (isLoading) {
-    return <InteractionsLoadingSkeleton />;
-  }
+  const loading = isLoading || isFetching;
 
   if (error) {
     return (
@@ -44,7 +42,7 @@ const InteractionLogs = () => {
   return (
     <section className="space-y-2">
       <PageHeader
-        pageTitle="Interaction Logs"
+        pageTitle="Interactions"
         pageShortDescription="Manage all your interaction logs in one place."
         newItemLink="/interaction-logs/new"
         refetch={refetch}
@@ -55,16 +53,22 @@ const InteractionLogs = () => {
         totalItems={meta?.total || interactions.length}
       />
 
-      <InteractionsSummaryCards
-        interactions={interactions}
-        total={meta?.total}
-      />
+      {loading ? (
+        <InteractionsLoadingSkeleton />
+      ) : (
+        <>
+          <InteractionsSummaryCards
+            interactions={interactions}
+            total={meta?.total}
+          />
 
-      <div className="space-y-2">
-        {interactions.map((interaction) => (
-          <InteractionCard interaction={interaction} key={interaction.id} />
-        ))}
-      </div>
+          <div className="space-y-2">
+            {interactions.map((interaction) => (
+              <InteractionCard interaction={interaction} key={interaction.id} />
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
 };
