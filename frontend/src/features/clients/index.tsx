@@ -4,9 +4,9 @@ import { Mail, Phone, Building2 } from "lucide-react";
 import { useGetAllClientsQuery } from "./api";
 import { IClient } from "./types";
 import ClientLoadingSkeleton from "./ClientLoadingSkeleton";
-import ErrorDisplayer from "./ErrorDisplayer";
 import NoClientFound from "./NoClientFound";
 import PageHeader from "@/components/PageHeader";
+import DataFetchErrorState from "@/components/DataFetchErrorState";
 
 const Clients = () => {
   const { data, error, isLoading, refetch, isFetching } = useGetAllClientsQuery(
@@ -38,7 +38,14 @@ const Clients = () => {
   }
 
   if (error) {
-    return <ErrorDisplayer refetch={refetch} />;
+    return (
+      <DataFetchErrorState
+        pageTitle="Clients"
+        refetch={refetch}
+        isRetrying={isLoading || isFetching}
+        pageShortDescription="We couldn't fetch clients. There might be server error occur. Please try again!"
+      />
+    );
   }
 
   return (

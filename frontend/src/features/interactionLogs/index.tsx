@@ -1,12 +1,12 @@
 import { useGetAllInteractionsQuery } from "./api";
 import InteractionsLoadingSkeleton from "./InteractionsLoadingSkeleton";
-import InteractionErrorDisplayer from "./InteractionErrorDisplayer";
 import NoInteractionFound from "./NoInteractionFound";
 import { IInteractionsResponse } from "./types";
 import InteractionsSummaryCards from "./InteractionsSummaryCards";
 import InteractionCard from "./InteractionCard";
 import PageHeader from "@/components/PageHeader";
 import { useState } from "react";
+import DataFetchErrorState from "@/components/DataFetchErrorState";
 
 const InteractionLogs = () => {
   const { data, isLoading, isFetching, refetch, error } =
@@ -27,7 +27,14 @@ const InteractionLogs = () => {
   }
 
   if (error) {
-    return <InteractionErrorDisplayer refetch={refetch} />;
+    return (
+      <DataFetchErrorState
+        pageTitle="Interaction Logs"
+        refetch={refetch}
+        isRetrying={isLoading || isFetching}
+        pageShortDescription="We couldn't fetch interaction logs. There might be server error occur. Please try again!"
+      />
+    );
   }
 
   if (!interactions.length) {

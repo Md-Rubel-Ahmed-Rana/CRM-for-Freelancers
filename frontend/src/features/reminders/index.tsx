@@ -1,12 +1,12 @@
 import { useGetAllRemindersQuery } from "./api";
 import RemindersLoadingSkeleton from "./RemindersLoadingSkeleton";
-import RemindersErrorDisplayer from "./RemindersErrorDisplayer";
 import NoRemindersFound from "./NoRemindersFound";
 import { IReminderApiResponse } from "./types";
 import RemindersSummaryCards from "./RemindersSummaryCards";
 import ReminderCard from "./ReminderCard";
 import PageHeader from "@/components/PageHeader";
 import { useState } from "react";
+import DataFetchErrorState from "@/components/DataFetchErrorState";
 
 const Reminders = () => {
   const { data, isLoading, isFetching, refetch, error } =
@@ -28,7 +28,14 @@ const Reminders = () => {
   }
 
   if (error) {
-    return <RemindersErrorDisplayer refetch={refetch} />;
+    return (
+      <DataFetchErrorState
+        pageTitle="Reminders"
+        refetch={refetch}
+        isRetrying={isLoading || isFetching}
+        pageShortDescription="We couldn't fetch reminders. There might be server error occur. Please try again!"
+      />
+    );
   }
 
   return (
