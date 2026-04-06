@@ -1,4 +1,5 @@
 import apiSlice from "@/redux/apiSlice";
+import { IClientFormValues } from "../types";
 
 const clientApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -9,7 +10,15 @@ const clientApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["clients"],
     }),
+    createClient: builder.mutation({
+      query: (client: IClientFormValues) => ({
+        method: "POST",
+        url: "/clients",
+        body: client,
+      }),
+      invalidatesTags: ["clients"],
+    }),
   }),
 });
 
-export const { useGetAllClientsQuery } = clientApi;
+export const { useGetAllClientsQuery, useCreateClientMutation } = clientApi;
