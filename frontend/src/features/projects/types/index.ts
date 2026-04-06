@@ -1,4 +1,4 @@
-type TProjectStatus =
+type IProjectStatus =
   | "PENDING"
   | "IN_PROGRESS"
   | "COMPLETED"
@@ -12,7 +12,7 @@ export type IProject = {
   title: string;
   budget: number | string;
   deadline: string;
-  status: TProjectStatus | string;
+  status: IProjectStatus | string;
   description?: string | null;
   created_at?: string;
   updated_at?: string;
@@ -39,3 +39,18 @@ export type TProjectsApiResponse = {
     data: IProject[];
   };
 };
+
+export type ICreateProjectFormValues = {
+  title: string;
+  budget: number;
+  deadline: string;
+  status: IProjectStatus;
+};
+
+export const projectStatuses: IProjectStatus[] = [
+  "PENDING",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "ON_HOLD",
+  "CANCELLED",
+];
