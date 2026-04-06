@@ -15,6 +15,11 @@ export type IClient = {
   };
 };
 
+export type IClientDropdown = {
+  id: string;
+  name: string;
+};
+
 export type IClientFormValues = {
   name: string;
   email: string;

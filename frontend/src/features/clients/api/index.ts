@@ -10,6 +10,13 @@ const clientApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["clients"],
     }),
+    getAllClientsDropdown: builder.query({
+      query: () => ({
+        method: "GET",
+        url: "/clients/dropdown",
+      }),
+      providesTags: ["clients"],
+    }),
     createClient: builder.mutation({
       query: (client: IClientFormValues) => ({
         method: "POST",
@@ -21,4 +28,8 @@ const clientApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetAllClientsQuery, useCreateClientMutation } = clientApi;
+export const {
+  useGetAllClientsQuery,
+  useCreateClientMutation,
+  useGetAllClientsDropdownQuery,
+} = clientApi;
