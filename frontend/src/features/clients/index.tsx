@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo, useState } from "react";
-import { Mail, Phone, Building2 } from "lucide-react";
+import { Mail, Phone, Building2, Plus } from "lucide-react";
 import { useGetAllClientsQuery } from "./api";
 import { IClient } from "./types";
 import ClientLoadingSkeleton from "./ClientLoadingSkeleton";
-import NoClientFound from "./NoClientFound";
 import PageHeader from "@/components/PageHeader";
 import DataFetchErrorState from "@/components/DataFetchErrorState";
+import NoDataFound from "@/components/NoDataFound";
 
 const Clients = () => {
   const { data, error, isLoading, refetch, isFetching } = useGetAllClientsQuery(
@@ -63,7 +63,7 @@ const Clients = () => {
       />
 
       {filteredClients.length === 0 ? (
-        <NoClientFound />
+        <NoDataFound title="Clients" />
       ) : (
         <>
           {/* Desktop table */}

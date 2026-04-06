@@ -5,11 +5,11 @@ import { TProjectsApiResponse } from "./types";
 import ProjectLoadingSkeleton from "./ProjectLoadingSkeleton";
 import ProjectsSummaryCards from "./ProjectsSummaryCards";
 import ProjectsSearchFilters from "./ProjectsSearchFilters";
-import NoProjectFound from "./NoProjectFound";
 import ProjectsTable from "./ProjectsTable";
 import ProjectsCards from "./ProjectsCards";
 import PageHeader from "@/components/PageHeader";
 import DataFetchErrorState from "@/components/DataFetchErrorState";
+import NoDataFound from "@/components/NoDataFound";
 
 const statusStyles: Record<string, string> = {
   PENDING:
@@ -144,7 +144,7 @@ const Projects = () => {
       />
 
       {filteredProjects.length === 0 ? (
-        <NoProjectFound />
+        <NoDataFound title="Projects" />
       ) : (
         <>
           <ProjectsTable projects={filteredProjects} />

@@ -1,12 +1,12 @@
 import { useGetAllInteractionsQuery } from "./api";
 import InteractionsLoadingSkeleton from "./InteractionsLoadingSkeleton";
-import NoInteractionFound from "./NoInteractionFound";
 import { IInteractionsResponse } from "./types";
 import InteractionsSummaryCards from "./InteractionsSummaryCards";
 import InteractionCard from "./InteractionCard";
 import PageHeader from "@/components/PageHeader";
 import { useState } from "react";
 import DataFetchErrorState from "@/components/DataFetchErrorState";
+import NoDataFound from "@/components/NoDataFound";
 
 const InteractionLogs = () => {
   const { data, isLoading, isFetching, refetch, error } =
@@ -38,7 +38,7 @@ const InteractionLogs = () => {
   }
 
   if (!interactions.length) {
-    return <NoInteractionFound />;
+    return <NoDataFound title="Interactions" />;
   }
 
   return (

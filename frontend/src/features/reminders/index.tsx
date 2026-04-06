@@ -1,12 +1,12 @@
 import { useGetAllRemindersQuery } from "./api";
 import RemindersLoadingSkeleton from "./RemindersLoadingSkeleton";
-import NoRemindersFound from "./NoRemindersFound";
 import { IReminderApiResponse } from "./types";
 import RemindersSummaryCards from "./RemindersSummaryCards";
 import ReminderCard from "./ReminderCard";
 import PageHeader from "@/components/PageHeader";
 import { useState } from "react";
 import DataFetchErrorState from "@/components/DataFetchErrorState";
+import NoDataFound from "@/components/NoDataFound";
 
 const Reminders = () => {
   const { data, isLoading, isFetching, refetch, error } =
@@ -58,7 +58,7 @@ const Reminders = () => {
       />
 
       {reminders.length === 0 ? (
-        <NoRemindersFound />
+        <NoDataFound title="Reminders" />
       ) : (
         <div className="grid grid-cols-1 gap-5">
           {reminders.map((reminder) => (
