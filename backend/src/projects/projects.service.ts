@@ -100,6 +100,23 @@ export class ProjectsService {
     };
   }
 
+  async findAllForDropdown(userId: string, client_id?: string) {
+    const projects = await this.prisma.project.findMany({
+      where: {
+        user_id: userId,
+        client_id: client_id,
+      },
+      select: {
+        id: true,
+        title: true,
+      },
+    });
+    return {
+      projects,
+      message: 'Projects fetched successfully',
+    };
+  }
+
   async findOne(userId: string, id: string) {
     const project = await this.prisma.project.findFirst({
       where: {

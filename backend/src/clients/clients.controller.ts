@@ -31,6 +31,12 @@ export class ClientsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('dropdown')
+  findAllForDropdown(@Req() req) {
+    return this.clientsService.findAllForDropdown(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Req() req, @Param('id') id: string) {
     return this.clientsService.findOne(req.user.id, id);
