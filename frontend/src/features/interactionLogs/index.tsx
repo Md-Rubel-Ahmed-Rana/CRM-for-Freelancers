@@ -35,10 +35,6 @@ const InteractionLogs = () => {
     );
   }
 
-  if (!interactions.length) {
-    return <NoDataFound title="Interactions" />;
-  }
-
   return (
     <section className="space-y-2">
       <PageHeader
@@ -61,12 +57,20 @@ const InteractionLogs = () => {
             interactions={interactions}
             total={meta?.total}
           />
-
-          <div className="space-y-2">
-            {interactions.map((interaction) => (
-              <InteractionCard interaction={interaction} key={interaction.id} />
-            ))}
-          </div>
+          {!interactions.length ? (
+            <NoDataFound title="Interactions" />
+          ) : (
+            <>
+              <div className="space-y-2">
+                {interactions.map((interaction) => (
+                  <InteractionCard
+                    interaction={interaction}
+                    key={interaction.id}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </>
       )}
     </section>
