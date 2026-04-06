@@ -4,7 +4,6 @@ import { useGetAllProjectsQuery } from "./api";
 import { TProjectsApiResponse } from "./types";
 import ProjectLoadingSkeleton from "./ProjectLoadingSkeleton";
 import ProjectsSummaryCards from "./ProjectsSummaryCards";
-import ProjectsSearchFilters from "./ProjectsSearchFilters";
 import ProjectsTable from "./ProjectsTable";
 import ProjectsCards from "./ProjectsCards";
 import PageHeader from "@/components/PageHeader";

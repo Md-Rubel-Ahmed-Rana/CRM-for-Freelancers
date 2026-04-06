@@ -20,7 +20,7 @@ const CreateProjectForm = () => {
       title: "",
       budget: 0,
       deadline: "",
-      status: "PENDING",
+      status: "PLANNING",
     },
   });
 
@@ -37,7 +37,7 @@ const CreateProjectForm = () => {
       client_id: clientId,
       title: values.title,
       budget: Number(values.budget),
-      deadline: values.deadline,
+      deadline: new Date(values.deadline).toISOString(), // should ISO string be sent?
       status: values.status,
     };
 

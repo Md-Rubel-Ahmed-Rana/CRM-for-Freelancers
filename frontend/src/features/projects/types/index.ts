@@ -1,5 +1,5 @@
 type IProjectStatus =
-  | "PENDING"
+  | "PLANNING"
   | "IN_PROGRESS"
   | "COMPLETED"
   | "ON_HOLD"
@@ -48,7 +48,7 @@ export type ICreateProjectFormValues = {
 };
 
 export const projectStatuses: IProjectStatus[] = [
-  "PENDING",
+  "PLANNING",
   "IN_PROGRESS",
   "COMPLETED",
   "ON_HOLD",
