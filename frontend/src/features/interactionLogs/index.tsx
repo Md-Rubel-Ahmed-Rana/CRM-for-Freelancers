@@ -1,11 +1,12 @@
 import { useGetAllInteractionsQuery } from "./api";
 import InteractionsLoadingSkeleton from "./InteractionsLoadingSkeleton";
-import InteractionErrorDisplayer from "./InteractionErrorDisplayer";
-import NoInteractionFound from "./NoInteractionFound";
-import InteractionsHeader from "./InteractionsHeader";
 import { IInteractionsResponse } from "./types";
 import InteractionsSummaryCards from "./InteractionsSummaryCards";
 import InteractionCard from "./InteractionCard";
+import PageHeader from "@/components/PageHeader";
+import { useState } from "react";
+import DataFetchErrorState from "@/components/DataFetchErrorState";
+import NoDataFound from "@/components/NoDataFound";
 
 const InteractionLogs = () => {
   const { data, isLoading, isFetching, refetch, error } =
@@ -19,25 +20,39 @@ const InteractionLogs = () => {
 
   const interactions = data?.data?.data ?? [];
   const meta = data?.data?.meta;
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (isLoading) {
     return <InteractionsLoadingSkeleton />;
   }
 
   if (error) {
-    return <InteractionErrorDisplayer refetch={refetch} />;
+    return (
+      <DataFetchErrorState
+        pageTitle="Interaction Logs"
+        refetch={refetch}
+        isRetrying={isLoading || isFetching}
+        pageShortDescription="We couldn't fetch interaction logs. There might be server error occur. Please try again!"
+      />
+    );
   }
 
   if (!interactions.length) {
-    return <NoInteractionFound />;
+    return <NoDataFound title="Interactions" />;
   }
 
   return (
-    <section className="space-y-6">
-      <InteractionsHeader
-        isFetching={isFetching}
-        meta={meta}
+    <section className="space-y-2">
+      <PageHeader
+        pageTitle="Interaction Logs"
+        pageShortDescription="Manage all your interaction logs in one place."
+        newItemLink="/interaction-logs/new"
         refetch={refetch}
+        isFetching={isFetching}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Search interaction logs..."
+        totalItems={meta?.total || interactions.length}
       />
 
       <InteractionsSummaryCards
@@ -45,7 +60,7 @@ const InteractionLogs = () => {
         total={meta?.total}
       />
 
-      <div className="space-y-4">
+      <div className="space-y-2">
         {interactions.map((interaction) => (
           <InteractionCard interaction={interaction} key={interaction.id} />
         ))}

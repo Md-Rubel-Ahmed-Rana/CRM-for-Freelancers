@@ -1,16 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo, useState } from "react";
-import { SquarePen, Trash2 } from "lucide-react";
 import { useGetAllProjectsQuery } from "./api";
 import { TProjectsApiResponse } from "./types";
 import ProjectLoadingSkeleton from "./ProjectLoadingSkeleton";
-import ProjectsHeader from "./ProjectsHeader";
 import ProjectsSummaryCards from "./ProjectsSummaryCards";
 import ProjectsSearchFilters from "./ProjectsSearchFilters";
-import NoProjectFound from "./NoProjectFound";
-import ProjectsErrorDisplayer from "./ProjectsErrorDisplayer";
 import ProjectsTable from "./ProjectsTable";
 import ProjectsCards from "./ProjectsCards";
+import PageHeader from "@/components/PageHeader";
+import DataFetchErrorState from "@/components/DataFetchErrorState";
+import NoDataFound from "@/components/NoDataFound";
 
 const statusStyles: Record<string, string> = {
   PENDING:
@@ -105,12 +104,30 @@ const Projects = () => {
   }
 
   if (error) {
-    return <ProjectsErrorDisplayer refetch={refetch} />;
+    return (
+      <DataFetchErrorState
+        pageTitle="Projects"
+        refetch={refetch}
+        isRetrying={isLoading || isFetching}
+        pageShortDescription="We couldn't fetch projects. There might be server error occur. Please try again!"
+      />
+    );
   }
 
   return (
-    <section className="space-y-6">
-      <ProjectsHeader isFetching={isFetching} refetch={refetch} />
+    <section className="space-y-2">
+      <PageHeader
+        pageTitle="Projects"
+        pageShortDescription="Manage all client projects with status, budget, and deadlines."
+        newItemLink="/projects/new"
+        refetch={refetch}
+        isFetching={isFetching}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Search projects..."
+        totalItems={meta?.total || projects.length}
+      />
+
       <ProjectsSummaryCards
         activeCount={activeCount}
         completedCount={completedCount}
@@ -119,18 +136,15 @@ const Projects = () => {
         totalBudget={totalBudget}
       />
 
-      <ProjectsSearchFilters
-        searchTerm={searchTerm}
-        selectedStatus={selectedStatus}
-        setSearchTerm={setSearchTerm}
-        setSelectedStatus={setSelectedStatus}
-      />
-
       {filteredProjects.length === 0 ? (
-        <NoProjectFound />
+        <NoDataFound title="Projects" />
       ) : (
         <>
-          <ProjectsTable projects={filteredProjects} />
+          <ProjectsTable
+            projects={filteredProjects}
+            selectedStatus={selectedStatus}
+            setSelectedStatus={setSelectedStatus}
+          />
 
           <ProjectsCards projects={filteredProjects} />
         </>

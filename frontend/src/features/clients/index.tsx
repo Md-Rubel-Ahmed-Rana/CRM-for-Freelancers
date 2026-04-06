@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo, useState } from "react";
-import { Mail, Phone, Building2 } from "lucide-react";
+import { Mail, Phone, Building2, Plus } from "lucide-react";
 import { useGetAllClientsQuery } from "./api";
 import { IClient } from "./types";
 import ClientLoadingSkeleton from "./ClientLoadingSkeleton";
-import ErrorDisplayer from "./ErrorDisplayer";
-import ClientHeader from "./ClientHeader";
-import NoClientFound from "./NoClientFound";
+import PageHeader from "@/components/PageHeader";
+import DataFetchErrorState from "@/components/DataFetchErrorState";
+import NoDataFound from "@/components/NoDataFound";
 
 const Clients = () => {
   const { data, error, isLoading, refetch, isFetching } = useGetAllClientsQuery(
@@ -38,21 +38,32 @@ const Clients = () => {
   }
 
   if (error) {
-    return <ErrorDisplayer refetch={refetch} />;
+    return (
+      <DataFetchErrorState
+        pageTitle="Clients"
+        refetch={refetch}
+        isRetrying={isLoading || isFetching}
+        pageShortDescription="We couldn't fetch clients. There might be server error occur. Please try again!"
+      />
+    );
   }
 
   return (
     <section className="space-y-2">
-      {/* Header */}
-      <ClientHeader
-        isFetching={isFetching}
+      <PageHeader
+        pageTitle="Clients"
+        pageShortDescription="View, search, and manage your client relationships in one place."
+        newItemLink="/clients/new"
         refetch={refetch}
+        isFetching={isFetching}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        searchPlaceholder="Search clients..."
+        totalItems={meta.total || clients.length}
       />
 
       {filteredClients.length === 0 ? (
-        <NoClientFound />
+        <NoDataFound title="Clients" />
       ) : (
         <>
           {/* Desktop table */}
