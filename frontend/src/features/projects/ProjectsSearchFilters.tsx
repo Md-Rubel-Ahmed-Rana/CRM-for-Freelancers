@@ -17,7 +17,7 @@ const ProjectsFilters = ({ selectedStatus, setSelectedStatus }: Props) => {
         <option disabled value="ALL">
           Status
         </option>
-        <option value="PENDING">Pending</option>
+        <option value="PLANNING">Planning</option>
         <option value="IN_PROGRESS">In Progress</option>
         <option value="COMPLETED">Completed</option>
         <option value="ON_HOLD">On Hold</option>
