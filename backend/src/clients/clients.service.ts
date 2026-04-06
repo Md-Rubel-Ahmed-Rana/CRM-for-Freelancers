@@ -117,6 +117,23 @@ export class ClientsService {
     };
   }
 
+  async findAllForDropdown(userId: string) {
+    const clients = await this.prisma.client.findMany({
+      where: {
+        user_id: userId,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    return {
+      clients,
+      message: 'Clients retrieved for dropdown successfully',
+    };
+  }
+
   async findOne(userId: string, id: string) {
     const client = await this.prisma.client.findFirst({
       where: {

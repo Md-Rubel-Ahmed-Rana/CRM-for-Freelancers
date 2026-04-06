@@ -30,6 +30,15 @@ export class ProjectsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('dropdown')
+  findAllForDropdown(@Req() req, @Query() query) {
+    return this.projectsService.findAllForDropdown(
+      req.user.id,
+      query.client_id,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Req() req, @Param('id') id: string) {
     return this.projectsService.findOne(req.user.id, id);
