@@ -19,15 +19,15 @@ export class ProjectsService {
     });
 
     if (!client) {
-      throw new BadRequestException('Invalid client');
+      throw new BadRequestException(
+        'The client you are trying to assign this project to does not exist or does not belong to you.',
+      );
     }
 
     const project = await this.prisma.project.create({
       data: {
         ...dto,
-      },
-      include: {
-        client: true,
+        user_id: userId,
       },
     });
 
