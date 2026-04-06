@@ -1,16 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useMemo, useState } from "react";
-import { SquarePen, Trash2 } from "lucide-react";
 import { useGetAllProjectsQuery } from "./api";
 import { TProjectsApiResponse } from "./types";
 import ProjectLoadingSkeleton from "./ProjectLoadingSkeleton";
-import ProjectsHeader from "./ProjectsHeader";
 import ProjectsSummaryCards from "./ProjectsSummaryCards";
 import ProjectsSearchFilters from "./ProjectsSearchFilters";
 import NoProjectFound from "./NoProjectFound";
 import ProjectsErrorDisplayer from "./ProjectsErrorDisplayer";
 import ProjectsTable from "./ProjectsTable";
 import ProjectsCards from "./ProjectsCards";
+import PageHeader from "@/components/PageHeader";
 
 const statusStyles: Record<string, string> = {
   PENDING:
@@ -110,7 +109,18 @@ const Projects = () => {
 
   return (
     <section className="space-y-6">
-      <ProjectsHeader isFetching={isFetching} refetch={refetch} />
+      <PageHeader
+        pageTitle="Projects"
+        pageShortDescription="Manage all client projects with status, budget, and deadlines."
+        newItemLink="/projects/new"
+        refetch={refetch}
+        isFetching={isFetching}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Search projects..."
+        totalItems={meta?.total || projects.length}
+      />
+
       <ProjectsSummaryCards
         activeCount={activeCount}
         completedCount={completedCount}

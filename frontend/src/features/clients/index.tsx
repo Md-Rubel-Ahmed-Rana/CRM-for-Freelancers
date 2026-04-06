@@ -5,8 +5,8 @@ import { useGetAllClientsQuery } from "./api";
 import { IClient } from "./types";
 import ClientLoadingSkeleton from "./ClientLoadingSkeleton";
 import ErrorDisplayer from "./ErrorDisplayer";
-import ClientHeader from "./ClientHeader";
 import NoClientFound from "./NoClientFound";
+import PageHeader from "@/components/PageHeader";
 
 const Clients = () => {
   const { data, error, isLoading, refetch, isFetching } = useGetAllClientsQuery(
@@ -43,12 +43,16 @@ const Clients = () => {
 
   return (
     <section className="space-y-2">
-      {/* Header */}
-      <ClientHeader
-        isFetching={isFetching}
+      <PageHeader
+        pageTitle="Clients"
+        pageShortDescription="View, search, and manage your client relationships in one place."
+        newItemLink="/clients/new"
         refetch={refetch}
+        isFetching={isFetching}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        searchPlaceholder="Search clients..."
+        totalItems={meta.total || clients.length}
       />
 
       {filteredClients.length === 0 ? (

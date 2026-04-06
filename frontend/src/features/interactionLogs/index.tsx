@@ -2,10 +2,11 @@ import { useGetAllInteractionsQuery } from "./api";
 import InteractionsLoadingSkeleton from "./InteractionsLoadingSkeleton";
 import InteractionErrorDisplayer from "./InteractionErrorDisplayer";
 import NoInteractionFound from "./NoInteractionFound";
-import InteractionsHeader from "./InteractionsHeader";
 import { IInteractionsResponse } from "./types";
 import InteractionsSummaryCards from "./InteractionsSummaryCards";
 import InteractionCard from "./InteractionCard";
+import PageHeader from "@/components/PageHeader";
+import { useState } from "react";
 
 const InteractionLogs = () => {
   const { data, isLoading, isFetching, refetch, error } =
@@ -19,6 +20,7 @@ const InteractionLogs = () => {
 
   const interactions = data?.data?.data ?? [];
   const meta = data?.data?.meta;
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (isLoading) {
     return <InteractionsLoadingSkeleton />;
@@ -34,10 +36,16 @@ const InteractionLogs = () => {
 
   return (
     <section className="space-y-6">
-      <InteractionsHeader
-        isFetching={isFetching}
-        meta={meta}
+      <PageHeader
+        pageTitle="Interaction Logs"
+        pageShortDescription="Manage all your interaction logs in one place."
+        newItemLink="/interaction-logs/new"
         refetch={refetch}
+        isFetching={isFetching}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Search interaction logs..."
+        totalItems={meta?.total || interactions.length}
       />
 
       <InteractionsSummaryCards

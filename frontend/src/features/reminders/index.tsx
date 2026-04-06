@@ -1,11 +1,12 @@
 import { useGetAllRemindersQuery } from "./api";
 import RemindersLoadingSkeleton from "./RemindersLoadingSkeleton";
 import RemindersErrorDisplayer from "./RemindersErrorDisplayer";
-import RemindersHeader from "./RemindersHeader";
 import NoRemindersFound from "./NoRemindersFound";
 import { IReminderApiResponse } from "./types";
 import RemindersSummaryCards from "./RemindersSummaryCards";
 import ReminderCard from "./ReminderCard";
+import PageHeader from "@/components/PageHeader";
+import { useState } from "react";
 
 const Reminders = () => {
   const { data, isLoading, isFetching, refetch, error } =
@@ -18,6 +19,9 @@ const Reminders = () => {
     };
 
   const reminders = data?.data?.data ?? [];
+  const meta = data?.data?.meta;
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (isLoading) {
     return <RemindersLoadingSkeleton />;
@@ -29,7 +33,17 @@ const Reminders = () => {
 
   return (
     <section className="space-y-2">
-      <RemindersHeader isFetching={isFetching} refetch={refetch} />
+      <PageHeader
+        pageTitle="Reminders"
+        pageShortDescription="Manage all your reminders in one place."
+        newItemLink="/reminders/new"
+        refetch={refetch}
+        isFetching={isFetching}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Search reminders..."
+        totalItems={meta?.total || reminders.length}
+      />
 
       <RemindersSummaryCards
         reminders={reminders}
