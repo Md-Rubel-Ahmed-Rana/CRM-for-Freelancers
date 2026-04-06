@@ -1,4 +1,4 @@
-import { SquarePen, Trash2 } from "lucide-react";
+import { Filter, SquarePen, Trash2 } from "lucide-react";
 import {
   formatProjectCurrency,
   formatProjectDate,
@@ -6,12 +6,19 @@ import {
   isProjectOverdue,
 } from ".";
 import { IProject } from "./types";
+import ProjectsFilters from "./ProjectsSearchFilters";
 
 type Props = {
   projects: IProject[];
+  selectedStatus: string;
+  setSelectedStatus: (selectedStatus: string) => void;
 };
 
-const ProjectsTable = ({ projects }: Props) => {
+const ProjectsTable = ({
+  projects,
+  selectedStatus,
+  setSelectedStatus,
+}: Props) => {
   return (
     <div className="hidden overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 lg:block">
       <div className="overflow-x-auto">
@@ -31,7 +38,10 @@ const ProjectsTable = ({ projects }: Props) => {
                 Deadline
               </th>
               <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                Status
+                <ProjectsFilters
+                  selectedStatus={selectedStatus}
+                  setSelectedStatus={setSelectedStatus}
+                />
               </th>
               <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Actions

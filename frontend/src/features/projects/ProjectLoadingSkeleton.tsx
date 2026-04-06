@@ -1,6 +1,6 @@
 const ProjectLoadingSkeleton = () => {
   return (
-    <section className="space-y-6 animate-pulse">
+    <section className="space-y-2 animate-pulse">
       <div className="flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 md:flex-row md:items-center md:justify-between">
         <div className="space-y-3">
           <div className="h-7 w-40 rounded-xl bg-gray-200 dark:bg-zinc-800" />
@@ -13,7 +13,7 @@ const ProjectLoadingSkeleton = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
@@ -27,13 +27,6 @@ const ProjectLoadingSkeleton = () => {
             <div className="mt-2 h-3 w-28 rounded-xl bg-gray-200 dark:bg-zinc-800" />
           </div>
         ))}
-      </div>
-
-      <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="h-11 w-full rounded-2xl bg-gray-200 dark:bg-zinc-800 lg:max-w-md" />
-          <div className="h-11 w-full rounded-2xl bg-gray-200 dark:bg-zinc-800 lg:w-48" />
-        </div>
       </div>
 
       <div className="hidden overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 lg:block">

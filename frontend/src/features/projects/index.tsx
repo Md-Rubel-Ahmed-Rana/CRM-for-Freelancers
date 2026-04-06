@@ -115,7 +115,7 @@ const Projects = () => {
   }
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-2">
       <PageHeader
         pageTitle="Projects"
         pageShortDescription="Manage all client projects with status, budget, and deadlines."
@@ -136,18 +136,15 @@ const Projects = () => {
         totalBudget={totalBudget}
       />
 
-      <ProjectsSearchFilters
-        searchTerm={searchTerm}
-        selectedStatus={selectedStatus}
-        setSearchTerm={setSearchTerm}
-        setSelectedStatus={setSelectedStatus}
-      />
-
       {filteredProjects.length === 0 ? (
         <NoDataFound title="Projects" />
       ) : (
         <>
-          <ProjectsTable projects={filteredProjects} />
+          <ProjectsTable
+            projects={filteredProjects}
+            selectedStatus={selectedStatus}
+            setSelectedStatus={setSelectedStatus}
+          />
 
           <ProjectsCards projects={filteredProjects} />
         </>

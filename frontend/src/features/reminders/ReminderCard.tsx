@@ -74,7 +74,7 @@ const ReminderCard = ({ reminder }: Props) => {
   return (
     <article
       key={reminder.id}
-      className={`rounded-3xl border bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:bg-zinc-900 ${dueMeta.cardTone}`}
+      className={`rounded-lg border bg-white p-5 shadow-sm   hover:shadow-md dark:bg-zinc-900 ${dueMeta.cardTone}`}
     >
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

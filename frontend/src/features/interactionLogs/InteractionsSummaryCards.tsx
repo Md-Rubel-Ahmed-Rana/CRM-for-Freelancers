@@ -14,7 +14,7 @@ const StatCard = ({
   icon: React.ElementType;
 }) => {
   return (
-    <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm   hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -61,7 +61,7 @@ const InteractionsSummaryCards = ({ interactions, total }: Props) => {
   }, [interactions, total]);
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard
         title="Total Logs"
         value={stats.total}

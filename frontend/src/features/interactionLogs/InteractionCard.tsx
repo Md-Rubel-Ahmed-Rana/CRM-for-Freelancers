@@ -99,9 +99,9 @@ const InteractionCard = ({ interaction }: Props) => {
   return (
     <article
       key={interaction.id}
-      className="group rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+      className="group rounded-lg border border-gray-200 bg-white p-2 shadow-sm   hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
     >
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
         <div className="flex min-w-0 flex-1 gap-4">
           <div
             className={`hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl sm:flex ${config.iconWrapClass}`}
@@ -110,7 +110,7 @@ const InteractionCard = ({ interaction }: Props) => {
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <span
@@ -152,8 +152,8 @@ const InteractionCard = ({ interaction }: Props) => {
               {interaction.notes}
             </p>
 
-            <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-2xl bg-gray-50 p-4 dark:bg-zinc-800/70">
+            <div className="mt-5 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
+              <div className="rounded-lg bg-gray-50 p-4 dark:bg-zinc-800/70">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Client Phone
                 </p>
@@ -162,7 +162,7 @@ const InteractionCard = ({ interaction }: Props) => {
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-gray-50 p-4 dark:bg-zinc-800/70">
+              <div className="rounded-lg bg-gray-50 p-4 dark:bg-zinc-800/70">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Budget
                 </p>
@@ -171,7 +171,7 @@ const InteractionCard = ({ interaction }: Props) => {
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-gray-50 p-4 dark:bg-zinc-800/70">
+              <div className="rounded-lg bg-gray-50 p-4 dark:bg-zinc-800/70">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Deadline
                 </p>
@@ -181,7 +181,7 @@ const InteractionCard = ({ interaction }: Props) => {
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-gray-50 p-4 dark:bg-zinc-800/70">
+              <div className="rounded-lg bg-gray-50 p-4 dark:bg-zinc-800/70">
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   Client Note
                 </p>

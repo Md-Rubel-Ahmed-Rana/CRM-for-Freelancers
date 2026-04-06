@@ -42,7 +42,7 @@ const InteractionLogs = () => {
   }
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-2">
       <PageHeader
         pageTitle="Interaction Logs"
         pageShortDescription="Manage all your interaction logs in one place."
@@ -60,7 +60,7 @@ const InteractionLogs = () => {
         total={meta?.total}
       />
 
-      <div className="space-y-4">
+      <div className="space-y-2">
         {interactions.map((interaction) => (
           <InteractionCard interaction={interaction} key={interaction.id} />
         ))}
