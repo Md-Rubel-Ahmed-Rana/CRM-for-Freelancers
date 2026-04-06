@@ -7,17 +7,18 @@ type Props = {
 
 const DashboardLayout = ({ component }: Props) => {
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-zinc-950 dark:text-white">
-      <div className="flex min-h-screen flex-col lg:flex-row">
-        {/* Sidebar */}
-        <DashboardSidebar />
+    <div className="h-screen overflow-hidden bg-gray-100 text-gray-900 dark:bg-zinc-950 dark:text-white">
+      <div className="flex h-full flex-col lg:flex-row">
+        <aside className="lg:sticky lg:top-0 lg:h-screen lg:shrink-0">
+          <DashboardSidebar />
+        </aside>
 
-        <div className="flex min-h-screen flex-1 flex-col">
-          {/* headers top bar  */}
-          <DashboardHeader />
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="sticky top-0 z-40 shrink-0">
+            <DashboardHeader />
+          </div>
 
-          {/* // dynamic content  */}
-          <main className="flex-1 p-2">{component}</main>
+          <main className="flex-1 overflow-y-auto p-2">{component}</main>
         </div>
       </div>
     </div>

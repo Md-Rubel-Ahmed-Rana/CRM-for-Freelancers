@@ -5,7 +5,6 @@ import {
   FolderKanban,
   Bell,
   ClipboardList,
-  Settings,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -44,7 +43,7 @@ const sidebarItems = [
 
 const DashboardSidebar = () => {
   return (
-    <aside className="w-full border-b border-gray-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 lg:w-64 lg:border-b-0 lg:border-r">
+    <aside className="h-screen w-72 overflow-y-auto border-r border-gray-200   dark:border-zinc-800  border-b   bg-white  dark:bg-zinc-900 lg:w-64 lg:border-b-0 lg:border-r ">
       <div className="flex h-20 items-center px-6">
         <h2 className="text-xl font-bold tracking-tight">Mini CRM</h2>
       </div>
