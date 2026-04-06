@@ -25,13 +25,6 @@ const ReminderCardSkeleton = () => {
 const RemindersLoadingSkeleton = () => {
   return (
     <div className="space-y-2">
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="animate-pulse space-y-3">
-          <div className="h-8 w-72 rounded bg-gray-200 dark:bg-zinc-800" />
-          <div className="h-4 w-96 max-w-full rounded bg-gray-200 dark:bg-zinc-800" />
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, idx) => (
           <div
@@ -47,7 +40,7 @@ const RemindersLoadingSkeleton = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-5">
+      <div className="grid grid-cols-1 gap-2">
         {Array.from({ length: 4 }).map((_, idx) => (
           <ReminderCardSkeleton key={idx} />
         ))}

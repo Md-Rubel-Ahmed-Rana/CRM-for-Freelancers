@@ -1,18 +1,6 @@
 const ProjectLoadingSkeleton = () => {
   return (
     <section className="space-y-2 animate-pulse">
-      <div className="flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-3">
-          <div className="h-7 w-40 rounded-xl bg-gray-200 dark:bg-zinc-800" />
-          <div className="h-4 w-72 rounded-xl bg-gray-200 dark:bg-zinc-800" />
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="h-10 w-28 rounded-2xl bg-gray-200 dark:bg-zinc-800" />
-          <div className="h-10 w-32 rounded-2xl bg-gray-200 dark:bg-zinc-800" />
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <div

@@ -24,6 +24,9 @@ const PageHeader = ({
   searchPlaceholder = "Search...",
   totalItems,
 }: Props) => {
+  const singularTitle = pageTitle.toLowerCase().endsWith("s")
+    ? pageTitle.slice(0, -1)
+    : pageTitle;
   return (
     <div className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 md:flex-row md:items-center md:justify-between">
       <div>
@@ -66,7 +69,10 @@ const PageHeader = ({
           />
         </button>
 
-        <Link href={newItemLink || "#"} title={`Add ${pageTitle || "Item"}`}>
+        <Link
+          href={newItemLink || "#"}
+          title={`Add ${singularTitle || "Item"}`}
+        >
           <button className="inline-flex items-center gap-2 rounded-full bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200 cursor-pointer">
             <Plus className="h-4 w-4" />
           </button>

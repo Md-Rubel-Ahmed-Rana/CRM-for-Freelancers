@@ -99,9 +99,7 @@ const Projects = () => {
     (item) => item.status === "IN_PROGRESS",
   ).length;
 
-  if (isLoading) {
-    return <ProjectLoadingSkeleton />;
-  }
+  const loading = isLoading || isFetching;
 
   if (error) {
     return (
@@ -128,25 +126,31 @@ const Projects = () => {
         totalItems={meta?.total || projects.length}
       />
 
-      <ProjectsSummaryCards
-        activeCount={activeCount}
-        completedCount={completedCount}
-        filteredProjects={filteredProjects}
-        meta={meta}
-        totalBudget={totalBudget}
-      />
-
-      {filteredProjects.length === 0 ? (
-        <NoDataFound title="Projects" />
+      {loading ? (
+        <ProjectLoadingSkeleton />
       ) : (
         <>
-          <ProjectsTable
-            projects={filteredProjects}
-            selectedStatus={selectedStatus}
-            setSelectedStatus={setSelectedStatus}
+          <ProjectsSummaryCards
+            activeCount={activeCount}
+            completedCount={completedCount}
+            filteredProjects={filteredProjects}
+            meta={meta}
+            totalBudget={totalBudget}
           />
 
-          <ProjectsCards projects={filteredProjects} />
+          {filteredProjects.length === 0 ? (
+            <NoDataFound title="Projects" />
+          ) : (
+            <>
+              <ProjectsTable
+                projects={filteredProjects}
+                selectedStatus={selectedStatus}
+                setSelectedStatus={setSelectedStatus}
+              />
+
+              <ProjectsCards projects={filteredProjects} />
+            </>
+          )}
         </>
       )}
     </section>

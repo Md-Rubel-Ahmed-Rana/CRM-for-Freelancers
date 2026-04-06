@@ -23,9 +23,7 @@ const Reminders = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  if (isLoading) {
-    return <RemindersLoadingSkeleton />;
-  }
+  const loading = isLoading || isFetching;
 
   if (error) {
     return (
@@ -52,19 +50,25 @@ const Reminders = () => {
         totalItems={meta?.total || reminders.length}
       />
 
-      <RemindersSummaryCards
-        reminders={reminders}
-        total={data?.data?.meta?.total}
-      />
-
-      {reminders.length === 0 ? (
-        <NoDataFound title="Reminders" />
+      {loading ? (
+        <RemindersLoadingSkeleton />
       ) : (
-        <div className="grid grid-cols-1 gap-5">
-          {reminders.map((reminder) => (
-            <ReminderCard reminder={reminder} key={reminder.id} />
-          ))}
-        </div>
+        <>
+          <RemindersSummaryCards
+            reminders={reminders}
+            total={data?.data?.meta?.total}
+          />
+
+          {reminders.length === 0 ? (
+            <NoDataFound title="Reminders" />
+          ) : (
+            <div className="grid grid-cols-1 gap-5">
+              {reminders.map((reminder) => (
+                <ReminderCard reminder={reminder} key={reminder.id} />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </section>
   );
