@@ -47,3 +47,12 @@ export type IReminderApiResponse = {
     data: IReminder[];
   };
 };
+
+export type ICreateReminderFormValues = {
+  client_id: string;
+  project_id?: string;
+  title: string;
+  description: string;
+  due_date: string;
+  is_completed: boolean;
+};
