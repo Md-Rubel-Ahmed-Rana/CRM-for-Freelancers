@@ -8,6 +8,7 @@ import { handleApiMutation } from "@/utils/handleApiMutation";
 import { useCreateProjectMutation } from "../api";
 import { useRouter } from "next/dist/client/components/navigation";
 import DateInput from "@/components/DateInput";
+import SelectInputs from "@/components/SelectInputs";
 
 const CreateProjectForm = () => {
   const [clientId, setClientId] = useState<string>("");
@@ -136,28 +137,13 @@ const CreateProjectForm = () => {
             errors={errors}
           />
 
-          <div className="lg:col-span-2">
-            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-zinc-300">
-              Status
-            </label>
-            <select
-              {...register("status", {
-                required: "Status is required",
-              })}
-              className="w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/10"
-            >
-              {projectStatuses.map((status) => (
-                <option key={status} value={status}>
-                  {status.replaceAll("_", " ")}
-                </option>
-              ))}
-            </select>
-            {errors.status && (
-              <p className="mt-2 text-xs text-red-600 dark:text-red-400">
-                {errors.status.message}
-              </p>
-            )}
-          </div>
+          <SelectInputs
+            label="Status"
+            name="status"
+            register={register}
+            errors={errors}
+            options={projectStatuses}
+          />
         </div>
 
         <div className="mt-8 flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:justify-end dark:border-zinc-800">
