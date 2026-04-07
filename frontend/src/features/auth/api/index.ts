@@ -48,6 +48,13 @@ const authApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["auth"],
     }),
+    revokeSession: builder.mutation({
+      query: (sessionId: string) => ({
+        method: "POST",
+        url: `/auth/sessions/${sessionId}/revoke`,
+      }),
+      invalidatesTags: ["auth"],
+    }),
   }),
 });
 
@@ -58,4 +65,5 @@ export const {
   useChangePasswordMutation,
   useUserRegisterMutation,
   useGetSessionsQuery,
+  useRevokeSessionMutation,
 } = authApi;
