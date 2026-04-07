@@ -55,6 +55,13 @@ const authApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["auth"],
     }),
+    logoutAll: builder.mutation({
+      query: () => ({
+        method: "POST",
+        url: "/auth/logout-all",
+      }),
+      invalidatesTags: ["auth"],
+    }),
   }),
 });
 
@@ -66,4 +73,5 @@ export const {
   useUserRegisterMutation,
   useGetSessionsQuery,
   useRevokeSessionMutation,
+  useLogoutAllMutation,
 } = authApi;
