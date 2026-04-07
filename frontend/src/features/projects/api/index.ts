@@ -10,6 +10,16 @@ const projectApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["projects"],
     }),
+    getAllProjectsDropdown: builder.query({
+      query: ({ client_id }: { client_id?: string }) => ({
+        method: "GET",
+        url: `/projects/dropdown`,
+        params: {
+          client_id,
+        },
+      }),
+      providesTags: ["projects"],
+    }),
     createProject: builder.mutation({
       query: (project: ICreateProjectFormValues) => ({
         method: "POST",
@@ -21,4 +31,8 @@ const projectApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetAllProjectsQuery, useCreateProjectMutation } = projectApi;
+export const {
+  useGetAllProjectsQuery,
+  useCreateProjectMutation,
+  useGetAllProjectsDropdownQuery,
+} = projectApi;

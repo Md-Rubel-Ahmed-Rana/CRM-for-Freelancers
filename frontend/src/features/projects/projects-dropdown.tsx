@@ -1,47 +1,58 @@
 import { useState } from "react";
 import { ChevronDown, Loader2, UserRound } from "lucide-react";
-import { useGetAllClientsDropdownQuery } from "@/features/clients/api";
-import { IClientDropdown } from "@/features/clients/types";
+import { useGetAllProjectsDropdownQuery } from "./api";
+import { IProjectDropdown } from "./types";
 
 type Props = {
-  setClientId: (clientId: string) => void;
+  setProjectId: (projectId: string) => void;
+  clientId: string;
 };
 
-const ClientsDropdown = ({ setClientId }: Props) => {
+const ProjectsDropdown = ({ setProjectId, clientId }: Props) => {
   const [selectedId, setSelectedId] = useState("");
 
   const {
-    data: clientsDropdown,
+    data: projectsDropdown,
     isLoading,
     isError,
-  } = useGetAllClientsDropdownQuery({});
+    isFetching,
+  } = useGetAllProjectsDropdownQuery(
+    {
+      client_id: clientId,
+    },
+    {
+      skip: !clientId,
+    },
+  );
 
-  const clients = (clientsDropdown?.data?.clients || []) as IClientDropdown[];
+  const projects = (projectsDropdown?.data?.projects ||
+    []) as IProjectDropdown[];
 
   const handleChange = (value: string) => {
     setSelectedId(value);
-    setClientId(value);
+    setProjectId(value);
   };
+
+  const loading = isLoading || isFetching;
 
   return (
     <div>
       <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-zinc-300">
-        Select Client
+        Select Project
       </label>
 
-      {isLoading ? (
+      {loading ? (
         <div className="flex h-12 w-full items-center gap-3 rounded-2xl border border-gray-300 bg-gray-50 px-4 text-sm text-gray-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
           <Loader2 className="h-4 w-4 animate-spin" />
-          Loading clients...
+          Loading projects...
         </div>
       ) : isError ? (
         <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-400">
-          Failed to load clients. Please try again.
+          Failed to load projects. Please try again.
         </div>
-      ) : clients.length === 0 ? (
+      ) : projects.length === 0 ? (
         <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-400">
-          No clients found. Please create a client first before adding a
-          project.
+          No projects found.
         </div>
       ) : (
         <div className="relative">
@@ -53,12 +64,10 @@ const ClientsDropdown = ({ setClientId }: Props) => {
             onChange={(e) => handleChange(e.target.value)}
             className="w-full appearance-none rounded-2xl border border-gray-300 bg-white py-3 pl-10 pr-10 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/10"
           >
-            <option disabled value="">
-              Choose a client
-            </option>
-            {clients.map((client) => (
-              <option key={client.id} value={client.id}>
-                {client.name}
+            <option value="">Choose a project</option>
+            {projects.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.title}
               </option>
             ))}
           </select>
@@ -68,4 +77,4 @@ const ClientsDropdown = ({ setClientId }: Props) => {
   );
 };
 
-export default ClientsDropdown;
+export default ProjectsDropdown;

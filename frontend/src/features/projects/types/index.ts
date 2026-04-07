@@ -47,6 +47,11 @@ export type ICreateProjectFormValues = {
   status: IProjectStatus;
 };
 
+export type IProjectDropdown = {
+  id: string;
+  title: string;
+};
+
 export const projectStatuses: IProjectStatus[] = [
   "PLANNING",
   "IN_PROGRESS",
