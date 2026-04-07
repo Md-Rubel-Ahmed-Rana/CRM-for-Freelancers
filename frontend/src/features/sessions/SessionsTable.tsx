@@ -1,5 +1,7 @@
 import { Monitor, Smartphone, LogOut, Trash2 } from "lucide-react";
 import { ISession } from "./types";
+import Logout from "@/common/Logout";
+import RemoveRemoteSession from "./RemoveRemoteSession";
 
 const formatDateTime = (date: string) => {
   return new Date(date).toLocaleString("en-US", {
@@ -119,18 +121,17 @@ const SessionsTable = ({
                     <button
                       type="button"
                       onClick={() => onLogoutSession?.(session)}
-                      className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10"
+                      className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10 cursor-pointer"
                     >
                       {isCurrent ? (
                         <>
-                          <LogOut className="h-4 w-4" />
-                          Logout
+                          <Logout
+                            shouldShowIcon={false}
+                            styles="inline-flex items-center gap-2 rounded-lg cursor-pointer  px-3 text-sm font-medium text-red-600"
+                          />
                         </>
                       ) : (
-                        <>
-                          <Trash2 className="h-4 w-4" />
-                          Remove
-                        </>
+                        <RemoveRemoteSession id={session.id} />
                       )}
                     </button>
                   </td>

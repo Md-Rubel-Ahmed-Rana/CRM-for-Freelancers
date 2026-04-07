@@ -3,14 +3,18 @@ import { ISession } from "./types";
 import SessionLoadingSkeleton from "./SessionLoadingSkeleton";
 import SessionErrorDisplayer from "./SessionErrorDisplayer";
 import SessionsTable from "./SessionsTable";
-import NoSessionFound from "./NoSessionFound";
+import RevokeAllSessions from "./RevokeAllSessions";
+import NoDataFound from "@/components/NoDataFound";
+import DataFetchErrorState from "@/components/DataFetchErrorState";
 
 type Props = {
   currentSessionId: string;
 };
 
 const Sessions = ({ currentSessionId }: Props) => {
-  const { data, isLoading, error } = useGetSessionsQuery({});
+  const { data, isLoading, error, isFetching, refetch } = useGetSessionsQuery(
+    {},
+  );
 
   const sessions = (data?.data?.data ?? []) as ISession[];
 
@@ -19,7 +23,14 @@ const Sessions = ({ currentSessionId }: Props) => {
   }
 
   if (error) {
-    return <SessionErrorDisplayer />;
+    return (
+      <DataFetchErrorState
+        pageTitle="Sessions"
+        refetch={refetch}
+        isRetrying={isLoading || isFetching}
+        pageShortDescription="We couldn't fetch sessions. There might be server error occur. Please try again!"
+      />
+    );
   }
 
   return (
@@ -34,13 +45,11 @@ const Sessions = ({ currentSessionId }: Props) => {
           </p>
         </div>
 
-        <div className="inline-flex w-fit items-center rounded-xl bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 dark:bg-zinc-800 dark:text-gray-200">
-          Logout from all Devices
-        </div>
+        <RevokeAllSessions />
       </div>
 
       {sessions.length === 0 ? (
-        <NoSessionFound />
+        <NoDataFound title="Sessions" />
       ) : (
         <SessionsTable
           sessions={sessions}

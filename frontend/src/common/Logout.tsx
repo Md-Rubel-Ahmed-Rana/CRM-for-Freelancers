@@ -2,7 +2,12 @@ import { useLogoutMutation } from "@/features/auth/api";
 import { LoaderCircle, LogOut } from "lucide-react";
 import { toast } from "react-toastify";
 
-const Logout = () => {
+type Props = {
+  shouldShowIcon?: boolean;
+  styles?: string;
+};
+
+const Logout = ({ shouldShowIcon = true, styles }: Props) => {
   const [logout, { isLoading }] = useLogoutMutation();
   const handleLogout = async () => {
     const response = await logout({}).unwrap();
@@ -18,12 +23,21 @@ const Logout = () => {
     <button
       disabled={isLoading}
       onClick={handleLogout}
-      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:text-red-700 transition cursor-pointer"
+      className={
+        styles ||
+        "flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 hover:text-red-700 transition cursor-pointer"
+      }
     >
-      {isLoading ? (
-        <LoaderCircle className="animate-spin h-6 w-6 text-gray-600" />
+      {shouldShowIcon ? (
+        <>
+          {isLoading ? (
+            <LoaderCircle className="animate-spin h-6 w-6 text-gray-600" />
+          ) : (
+            <LogOut size={18} />
+          )}
+        </>
       ) : (
-        <LogOut size={18} />
+        <>{isLoading ? <span>Logging out...</span> : <span>Logout</span>}</>
       )}
     </button>
   );
