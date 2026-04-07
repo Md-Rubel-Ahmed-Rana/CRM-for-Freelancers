@@ -1,5 +1,7 @@
 export type IInteractionType = "CALL" | "MEETING" | "EMAIL" | "OTHER";
 
+export const interactionsTypes = ["CALL", "MEETING", "EMAIL", "OTHER"];
+
 type IClient = {
   id: string;
   user_id: string;
@@ -52,4 +54,12 @@ export type IInteractionsResponse = {
     };
     data: IInteraction[];
   };
+};
+
+export type ICreateInteractionFormValues = {
+  client_id: string;
+  project_id?: string;
+  type: IInteractionType;
+  notes: string;
+  date: string;
 };

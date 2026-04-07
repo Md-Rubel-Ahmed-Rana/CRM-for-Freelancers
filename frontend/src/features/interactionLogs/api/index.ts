@@ -1,4 +1,5 @@
 import apiSlice from "@/redux/apiSlice";
+import { ICreateInteractionFormValues } from "../types";
 
 const interactionApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -9,7 +10,16 @@ const interactionApi = apiSlice.injectEndpoints({
       }),
       providesTags: ["interactions"],
     }),
+    createInteraction: builder.mutation({
+      query: (payload: ICreateInteractionFormValues) => ({
+        method: "POST",
+        url: "/interactions",
+        body: payload,
+      }),
+      invalidatesTags: ["interactions"],
+    }),
   }),
 });
 
-export const { useGetAllInteractionsQuery } = interactionApi;
+export const { useGetAllInteractionsQuery, useCreateInteractionMutation } =
+  interactionApi;

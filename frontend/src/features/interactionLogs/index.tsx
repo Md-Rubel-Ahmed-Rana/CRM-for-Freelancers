@@ -40,7 +40,7 @@ const InteractionLogs = () => {
       <PageHeader
         pageTitle="Interactions"
         pageShortDescription="Manage all your interaction logs in one place."
-        newItemLink="/interaction-logs/new"
+        newItemLink="/logs/new"
         refetch={refetch}
         isFetching={isFetching}
         searchTerm={searchTerm}

@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { CircleDollarSign, FileText, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { toast } from "react-toastify";
 import { handleApiMutation } from "@/utils/handleApiMutation";
 import { useRouter } from "next/dist/client/components/navigation";
 import DateInput from "@/components/DateInput";
-import { ICreateReminderFormValues } from "../types";
-import { useCreateReminderMutation } from "../api";
 import ClientsDropdown from "@/features/projects/create/clients-dropdown";
 import ProjectsDropdown from "@/features/projects/projects-dropdown";
-import CheckboxInput from "@/components/CheckboxInput";
+import { ICreateInteractionFormValues, interactionsTypes } from "../types";
+import { useCreateInteractionMutation } from "../api";
+import SelectInputs from "@/components/SelectInputs";
 
-const CreateReminderForm = () => {
+const CreateInteractionForm = () => {
   const [clientId, setClientId] = useState<string>("");
   const [projectId, setProjectId] = useState<string>("");
 
@@ -19,42 +19,46 @@ const CreateReminderForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ICreateReminderFormValues>({
+  } = useForm<ICreateInteractionFormValues>({
     defaultValues: {
       client_id: "",
       project_id: undefined,
-      title: "",
-      description: "",
-      due_date: "",
-      is_completed: false,
+      date: "",
+      type: "CALL",
+      notes: "",
     },
   });
 
-  const [createReminder, { isLoading }] = useCreateReminderMutation();
+  const [createInteraction, { isLoading }] = useCreateInteractionMutation();
   const router = useRouter();
 
-  const onSubmit = async (values: ICreateReminderFormValues) => {
+  const onSubmit = async (values: ICreateInteractionFormValues) => {
     if (!clientId) {
       toast.error("Please select a client first.");
       return;
     }
 
-    const payload: ICreateReminderFormValues = {
+    const payload: ICreateInteractionFormValues = {
       client_id: clientId,
-      project_id: values.project_id || undefined,
-      title: values.title,
-      description: values.description,
-      is_completed: values.is_completed,
-      due_date: new Date(values.due_date).toISOString(),
+      project_id: projectId || undefined,
+      type: values.type,
+      notes: values.notes,
+      date: new Date(values.date).toISOString(),
     };
+    console.log({ payload });
 
-    const { success } = await handleApiMutation(createReminder, payload, 201, {
-      error: "Failed to create reminder. Please try again.",
-      success: "Reminder created successfully!",
-    });
+    const { success } = await handleApiMutation(
+      createInteraction,
+      payload,
+      201,
+      {
+        error: "Failed to create interaction. Please try again.",
+        success: "Interaction created successfully!",
+      },
+    );
 
     if (success) {
-      router.push("/reminders");
+      router.push("/logs");
     }
   };
 
@@ -62,10 +66,10 @@ const CreateReminderForm = () => {
     <section className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       <div className="border-b border-gray-200 p-2 dark:border-zinc-800">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Reminder Details
+          Interaction Details
         </h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-zinc-400">
-          Enter the information below to create and assign a reminder.
+          Enter the information below to create and assign an interaction.
         </p>
       </div>
 
@@ -88,62 +92,37 @@ const CreateReminderForm = () => {
             )}
           </div>
 
-          <div className="lg:col-span-2">
-            <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-zinc-300">
-              Reminder Title
-            </label>
-            <div className="relative">
-              <FileText className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="e.g. Follow up with client about project proposal"
-                {...register("title", {
-                  required: "Reminder title is required",
-                  minLength: {
-                    value: 3,
-                    message: "Title must be at least 3 characters",
-                  },
-                })}
-                className="w-full rounded-2xl border border-gray-300 bg-white py-3 pl-10 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:placeholder:text-zinc-500 dark:focus:border-blue-500 dark:focus:ring-blue-500/10"
-              />
-            </div>
-            {errors.title && (
-              <p className="mt-2 text-xs text-red-600 dark:text-red-400">
-                {errors.title.message}
-              </p>
-            )}
-          </div>
-
           <div className="flex items-end justify-between gap-4 lg:col-span-2">
             <div className="w-full">
               <DateInput
-                name="due_date"
-                label="Due Date"
+                name="date"
+                label="Date of Interaction"
                 register={register}
                 errors={errors}
               />
             </div>
 
             <div className="w-full">
-              <CheckboxInput
-                name="is_completed"
-                label="Mark as Completed"
+              <SelectInputs
+                label="Type of Interaction"
+                name="type"
                 register={register}
                 errors={errors}
+                options={interactionsTypes}
               />
             </div>
           </div>
           <div className="lg:col-span-2">
             <label
-              htmlFor="description"
+              htmlFor="notes"
               className="mb-2 block text-sm font-medium text-gray-700 dark:text-zinc-300"
             ></label>
             <textarea
-              id="description"
+              id="notes"
               rows={5}
-              placeholder="Additional details about the reminder (optional)"
+              placeholder="Additional notes about the interaction..."
               className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-gray-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-white dark:focus:border-zinc-500"
-              {...register("description")}
+              {...register("notes")}
             />
           </div>
         </div>
@@ -164,7 +143,7 @@ const CreateReminderForm = () => {
             className={`inline-flex items-center justify-center gap-2 rounded-2xl  px-5 py-3 text-sm font-semibold text-white transition   ${isLoading ? "cursor-not-allowed opacity-70" : "bg-blue-600 hover:bg-blue-700 cursor-pointer"} `}
           >
             <Save className="h-4 w-4" />
-            {isLoading ? "Creating..." : "Create Reminder"}
+            {isLoading ? "Creating..." : "Create Interaction"}
           </button>
         </div>
       </form>
@@ -172,4 +151,4 @@ const CreateReminderForm = () => {
   );
 };
 
-export default CreateReminderForm;
+export default CreateInteractionForm;
