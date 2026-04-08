@@ -4,9 +4,12 @@ import { IClientFormValues } from "../types";
 const clientApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllClients: builder.query({
-      query: () => ({
+      query: ({ search_query }: { search_query?: string }) => ({
         method: "GET",
         url: "/clients",
+        params: {
+          search_query,
+        },
       }),
       providesTags: ["clients"],
     }),

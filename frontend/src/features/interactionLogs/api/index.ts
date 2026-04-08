@@ -4,9 +4,12 @@ import { ICreateInteractionFormValues } from "../types";
 const interactionApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllInteractions: builder.query({
-      query: () => ({
+      query: ({ search_query }: { search_query?: string }) => ({
         method: "GET",
         url: "/interactions",
+        params: {
+          search_query,
+        },
       }),
       providesTags: ["interactions"],
     }),

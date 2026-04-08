@@ -9,8 +9,15 @@ import DataFetchErrorState from "@/components/DataFetchErrorState";
 import NoDataFound from "@/components/NoDataFound";
 
 const InteractionLogs = () => {
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const { data, isLoading, isFetching, refetch, error } =
-    useGetAllInteractionsQuery({}) as {
+    useGetAllInteractionsQuery(
+      { search_query: searchTerm },
+      {
+        refetchOnReconnect: true,
+        refetchOnMountOrArgChange: true,
+      },
+    ) as {
       data?: IInteractionsResponse;
       isLoading: boolean;
       isFetching: boolean;
@@ -20,7 +27,6 @@ const InteractionLogs = () => {
 
   const interactions = data?.data?.data ?? [];
   const meta = data?.data?.meta;
-  const [searchTerm, setSearchTerm] = useState("");
 
   const loading = isLoading || isFetching;
 
@@ -45,7 +51,7 @@ const InteractionLogs = () => {
         isFetching={isFetching}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        searchPlaceholder="Search interaction logs..."
+        searchPlaceholder="Search on notes..."
         totalItems={meta?.total || interactions.length}
       />
 

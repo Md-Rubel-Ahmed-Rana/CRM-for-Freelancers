@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Mail, Phone, Building2, Plus } from "lucide-react";
 import { useGetAllClientsQuery } from "./api";
 import { IClient } from "./types";
@@ -9,29 +8,17 @@ import DataFetchErrorState from "@/components/DataFetchErrorState";
 import NoDataFound from "@/components/NoDataFound";
 
 const Clients = () => {
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const { data, error, isLoading, refetch, isFetching } = useGetAllClientsQuery(
-    {},
+    { search_query: searchTerm },
+    {
+      refetchOnReconnect: true,
+      refetchOnMountOrArgChange: true,
+    },
   );
-  const [searchTerm, setSearchTerm] = useState("");
 
   const clients = (data?.data?.data || []) as IClient[];
   const meta = data?.data?.meta;
-
-  const filteredClients = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-
-    if (!term) return clients;
-
-    return clients.filter((client) => {
-      return (
-        client.name.toLowerCase().includes(term) ||
-        client.email.toLowerCase().includes(term) ||
-        client.phone.toLowerCase().includes(term) ||
-        client.company?.toLowerCase().includes(term) ||
-        client.notes?.toLowerCase().includes(term)
-      );
-    });
-  }, [clients, searchTerm]);
 
   const loading = isLoading || isFetching;
 
@@ -56,7 +43,7 @@ const Clients = () => {
         isFetching={isFetching}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        searchPlaceholder="Search clients..."
+        searchPlaceholder="Search name, email, phone..."
         totalItems={meta?.total || clients?.length}
       />
 
@@ -64,7 +51,7 @@ const Clients = () => {
         <ClientLoadingSkeleton />
       ) : (
         <>
-          {filteredClients.length === 0 ? (
+          {clients.length === 0 ? (
             <NoDataFound title="Clients" />
           ) : (
             <>
@@ -84,7 +71,7 @@ const Clients = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredClients.map((client) => (
+                      {clients.map((client) => (
                         <tr
                           key={client.id}
                           className="border-t border-zinc-200 text-sm dark:border-zinc-800"
@@ -144,7 +131,7 @@ const Clients = () => {
 
               {/* Mobile / tablet cards */}
               <div className="grid grid-cols-1 gap-5 xl:hidden md:grid-cols-2">
-                {filteredClients.map((client) => (
+                {clients.map((client) => (
                   <div
                     key={client.id}
                     className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"

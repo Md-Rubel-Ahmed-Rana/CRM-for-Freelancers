@@ -1,5 +1,6 @@
 import { Plus, RefreshCcw, Search } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type Props = {
   pageTitle: string;
@@ -7,8 +8,8 @@ type Props = {
   newItemLink?: string;
   refetch: () => void;
   isFetching: boolean;
-  searchTerm: string;
-  setSearchTerm: (searchTerm: string) => void;
+  searchTerm: string | undefined;
+  setSearchTerm: (searchTerm: string | undefined) => void;
   searchPlaceholder?: string;
   totalItems?: number;
 };
@@ -19,7 +20,6 @@ const PageHeader = ({
   newItemLink,
   isFetching,
   refetch,
-  searchTerm,
   setSearchTerm,
   searchPlaceholder = "Search...",
   totalItems,
@@ -27,6 +27,21 @@ const PageHeader = ({
   const singularTitle = pageTitle.toLowerCase().endsWith("s")
     ? pageTitle.slice(0, -1)
     : pageTitle;
+
+  const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(inputValue.trim() === "" ? undefined : inputValue);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [inputValue, setSearchTerm]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
   return (
     <div className="flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 md:flex-row md:items-center md:justify-between">
       <div>
@@ -54,8 +69,8 @@ const PageHeader = ({
           <input
             type="text"
             placeholder={searchPlaceholder}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={inputValue}
+            onChange={handleSearchChange}
             className="w-full rounded-xl border border-zinc-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:focus:border-zinc-500"
           />
         </div>

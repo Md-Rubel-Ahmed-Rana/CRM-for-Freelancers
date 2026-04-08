@@ -9,8 +9,15 @@ import DataFetchErrorState from "@/components/DataFetchErrorState";
 import NoDataFound from "@/components/NoDataFound";
 
 const Reminders = () => {
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const { data, isLoading, isFetching, refetch, error } =
-    useGetAllRemindersQuery({}) as {
+    useGetAllRemindersQuery(
+      { search_query: searchTerm },
+      {
+        refetchOnReconnect: true,
+        refetchOnMountOrArgChange: true,
+      },
+    ) as {
       data?: IReminderApiResponse;
       isLoading: boolean;
       isFetching: boolean;
@@ -20,8 +27,6 @@ const Reminders = () => {
 
   const reminders = data?.data?.data ?? [];
   const meta = data?.data?.meta;
-
-  const [searchTerm, setSearchTerm] = useState("");
 
   const loading = isLoading || isFetching;
 
@@ -46,7 +51,7 @@ const Reminders = () => {
         isFetching={isFetching}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        searchPlaceholder="Search reminders..."
+        searchPlaceholder="Search title, description..."
         totalItems={meta?.total || reminders.length}
       />
 

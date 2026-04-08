@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useGetAllProjectsQuery } from "./api";
 import { TProjectsApiResponse } from "./types";
 import ProjectLoadingSkeleton from "./ProjectLoadingSkeleton";
@@ -52,8 +51,19 @@ export const isProjectOverdue = (deadline: string, status: string) => {
 };
 
 const Projects = () => {
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
+  const [selectedStatus, setSelectedStatus] = useState("ALL");
   const { data, isLoading, isFetching, refetch, error } =
-    useGetAllProjectsQuery({}) as {
+    useGetAllProjectsQuery(
+      {
+        search_query: searchTerm,
+        status: selectedStatus !== "ALL" ? selectedStatus : undefined,
+      },
+      {
+        refetchOnReconnect: true,
+        refetchOnMountOrArgChange: true,
+      },
+    ) as {
       data?: TProjectsApiResponse;
       isLoading: boolean;
       isFetching: boolean;
@@ -61,40 +71,19 @@ const Projects = () => {
       error?: any;
     };
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("ALL");
-
   const projects = data?.data?.data || [];
   const meta = data?.data?.meta;
 
-  const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
-      const matchesSearch =
-        project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.client?.name
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        project.client?.company
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase());
-
-      const matchesStatus =
-        selectedStatus === "ALL" || project.status === selectedStatus;
-
-      return matchesSearch && matchesStatus;
-    });
-  }, [projects, searchTerm, selectedStatus]);
-
-  const totalBudget = filteredProjects.reduce(
+  const totalBudget = projects.reduce(
     (sum, item) => sum + Number(item.budget || 0),
     0,
   );
 
-  const completedCount = filteredProjects.filter(
+  const completedCount = projects.filter(
     (item) => item.status === "COMPLETED",
   ).length;
 
-  const activeCount = filteredProjects.filter(
+  const activeCount = projects.filter(
     (item) => item.status === "IN_PROGRESS",
   ).length;
 
@@ -121,7 +110,7 @@ const Projects = () => {
         isFetching={isFetching}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        searchPlaceholder="Search projects..."
+        searchPlaceholder="Search title, client name..."
         totalItems={meta?.total || projects.length}
       />
 
@@ -132,22 +121,22 @@ const Projects = () => {
           <ProjectsSummaryCards
             activeCount={activeCount}
             completedCount={completedCount}
-            filteredProjects={filteredProjects}
+            filteredProjects={projects}
             meta={meta}
             totalBudget={totalBudget}
           />
 
-          {filteredProjects.length === 0 ? (
+          {projects.length === 0 ? (
             <NoDataFound title="Projects" />
           ) : (
             <>
               <ProjectsTable
-                projects={filteredProjects}
+                projects={projects}
                 selectedStatus={selectedStatus}
                 setSelectedStatus={setSelectedStatus}
               />
 
-              <ProjectsCards projects={filteredProjects} />
+              <ProjectsCards projects={projects} />
             </>
           )}
         </>
