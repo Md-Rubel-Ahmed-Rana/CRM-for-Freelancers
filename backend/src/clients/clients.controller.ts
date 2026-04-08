@@ -13,6 +13,8 @@ import {
 import { ClientsService } from './clients.service';
 import type { Client } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import pickQueries from 'src/common/helpers/pickQueries';
+import { paginationFields } from 'src/constants/paginationFields';
 
 @Controller('clients')
 export class ClientsController {
@@ -27,7 +29,12 @@ export class ClientsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Req() req, @Query() query) {
-    return this.clientsService.findAll(req.user.id, query);
+    const options = pickQueries(req.query, paginationFields);
+    return this.clientsService.findAll(
+      req.user.id,
+      options,
+      query.search_query,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

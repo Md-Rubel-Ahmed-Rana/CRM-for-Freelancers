@@ -5,7 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, Reminder } from '@prisma/client';
+import {
+  IPaginationOptions,
+  paginationHelpers,
+} from 'src/common/helpers/pagination';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { GetRemindersFilterDto } from './dto/filters.dto';
 
 @Injectable()
 export class RemindersService {
@@ -54,58 +59,57 @@ export class RemindersService {
 
   async findAll(
     userId: string,
-    filters?: {
-      client_id?: string;
-      project_id?: string;
-      is_completed?: boolean;
-      from_date?: string;
-      to_date?: string;
-      searchTerm?: string;
-    },
-    page: number = 1,
-    limit: number = 10,
+    options: IPaginationOptions,
+    filters: GetRemindersFilterDto,
+    search_query: string,
   ) {
+    const {
+      page,
+      limit,
+      skip,
+      sortBy = 'due_date',
+      sortOrder,
+    } = paginationHelpers.calculatePagination(options);
+    const { client, project, is_completed, start_date, end_date } = filters;
     const where: Prisma.ReminderWhereInput = {
       user_id: userId,
     };
 
-    if (filters?.client_id) {
-      where.client_id = filters.client_id;
+    if (client) {
+      where.client_id = client;
     }
 
-    if (filters?.project_id) {
-      where.project_id = filters.project_id;
+    if (project) {
+      where.project_id = project;
     }
 
-    if (typeof filters?.is_completed === 'boolean') {
-      where.is_completed = filters.is_completed;
+    if (typeof is_completed === 'boolean') {
+      where.is_completed = is_completed;
     }
 
-    if (filters?.from_date || filters?.to_date) {
+    if (start_date || end_date) {
       where.due_date = {
-        ...(filters.from_date && { gte: new Date(filters.from_date) }),
-        ...(filters.to_date && { lte: new Date(filters.to_date) }),
+        ...(start_date && { gte: new Date(start_date) }),
+        ...(end_date && { lte: new Date(end_date) }),
       };
     }
 
-    if (filters?.searchTerm) {
+    if (search_query) {
       where.OR = [
         {
           title: {
-            contains: filters.searchTerm,
+            contains: search_query,
             mode: 'insensitive',
           },
         },
         {
           description: {
-            contains: filters.searchTerm,
+            contains: search_query,
             mode: 'insensitive',
           },
         },
       ];
     }
-
-    const skip = (page - 1) * limit;
 
     const reminders = await this.prisma.reminder.findMany({
       where,
@@ -114,7 +118,7 @@ export class RemindersService {
         project: true,
       },
       orderBy: {
-        due_date: 'asc',
+        [sortBy]: sortOrder,
       },
       skip,
       take: limit,

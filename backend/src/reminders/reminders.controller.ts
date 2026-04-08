@@ -12,6 +12,12 @@ import {
 } from '@nestjs/common';
 import { RemindersService } from './reminders.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import pickQueries from 'src/common/helpers/pickQueries';
+import { paginationFields } from 'src/constants/paginationFields';
+import {
+  GetRemindersFilterDto,
+  reminderFilterableFields,
+} from './dto/filters.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('reminders')
@@ -25,7 +31,18 @@ export class RemindersController {
 
   @Get()
   findAll(@Req() req, @Query() query) {
-    return this.remindersService.findAll(req.user.id, query);
+    const options = pickQueries(req.query, paginationFields);
+    const filters = pickQueries(
+      req.query,
+      reminderFilterableFields,
+    ) as GetRemindersFilterDto;
+    const search_query = req.query.search_query as string;
+    return this.remindersService.findAll(
+      req.user.id,
+      options,
+      filters,
+      search_query,
+    );
   }
 
   @Get('due-this-week')
