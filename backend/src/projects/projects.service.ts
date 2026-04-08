@@ -5,6 +5,11 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, Project, ProjectStatus } from '@prisma/client';
+import {
+  IPaginationOptions,
+  paginationHelpers,
+} from 'src/common/helpers/pagination';
+import { GetProjectsFilterDto } from './dto/filters.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -39,30 +44,31 @@ export class ProjectsService {
 
   async findAll(
     userId: string,
-    query?: {
-      search?: string;
-      status?: string;
-      page?: number;
-      limit?: number;
-    },
+    options: IPaginationOptions,
+    filters: GetProjectsFilterDto,
+    search_query: string,
   ) {
-    const page = Number(query?.page || 1);
-    const limit = Number(query?.limit || 10);
-    const skip = (page - 1) * limit;
-
-    const search = query?.search?.trim();
-    const status = query?.status;
+    const { page, limit, skip, sortBy, sortOrder } =
+      paginationHelpers.calculatePagination(options);
+    const { status, client, budget, deadline } = filters;
 
     const where: Prisma.ProjectWhereInput = {
       client: {
         user_id: userId,
       },
       ...(status ? { status: status as ProjectStatus } : {}),
-      ...(search
+      ...(client ? { client_id: client } : {}),
+      ...(budget !== undefined ? { budget: { equals: budget } } : {}),
+      ...(deadline ? { deadline: { equals: deadline } } : {}),
+      ...(search_query
         ? {
             OR: [
-              { title: { contains: search, mode: 'insensitive' } },
-              { client: { name: { contains: search, mode: 'insensitive' } } },
+              { title: { contains: search_query, mode: 'insensitive' } },
+              {
+                client: {
+                  name: { contains: search_query, mode: 'insensitive' },
+                },
+              },
             ],
           }
         : {}),
@@ -74,7 +80,7 @@ export class ProjectsService {
         skip,
         take: limit,
         orderBy: {
-          created_at: 'desc',
+          [sortBy]: sortOrder,
         },
         include: {
           client: {

@@ -13,6 +13,12 @@ import {
 import { ProjectsService } from './projects.service';
 import type { Project } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import pickQueries from 'src/common/helpers/pickQueries';
+import { paginationFields } from 'src/constants/paginationFields';
+import {
+  GetProjectsFilterDto,
+  projectFilterableFields,
+} from './dto/filters.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -26,7 +32,18 @@ export class ProjectsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Req() req, @Query() query) {
-    return this.projectsService.findAll(req.user.id, query);
+    const options = pickQueries(req.query, paginationFields);
+    const filters = pickQueries(
+      req.query,
+      projectFilterableFields,
+    ) as GetProjectsFilterDto;
+    const search_query = req.query.search_query as string;
+    return this.projectsService.findAll(
+      req.user.id,
+      options,
+      filters,
+      search_query,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

@@ -6,13 +6,18 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { InteractionsService } from './interactions.service';
 import type { InteractionLog } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import pickQueries from 'src/common/helpers/pickQueries';
+import { paginationFields } from 'src/constants/paginationFields';
+import {
+  GetInteractionsFilterDto,
+  interactionFilterableFields,
+} from './dto/filters.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('interactions')
@@ -26,21 +31,20 @@ export class InteractionsController {
   }
 
   @Get()
-  findAll(
-    @Req() req: any,
-    @Query()
-    query: {
-      page?: number;
-      limit?: number;
-      client_id?: string;
-      project_id?: string;
-      type?: string;
-      from_date?: string;
-      to_date?: string;
-    },
-  ) {
+  findAll(@Req() req: any) {
     const userId = req.user.id;
-    return this.interactionsService.findAll(userId, query);
+    const options = pickQueries(req.query, paginationFields);
+    const filters = pickQueries(
+      req.query,
+      interactionFilterableFields,
+    ) as GetInteractionsFilterDto;
+    const search_query = req.query.search_query as string;
+    return this.interactionsService.findAll(
+      userId,
+      options,
+      filters,
+      search_query,
+    );
   }
 
   @Get(':id')

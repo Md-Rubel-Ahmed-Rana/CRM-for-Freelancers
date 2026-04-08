@@ -5,6 +5,10 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Client, Prisma } from '@prisma/client';
+import {
+  IPaginationOptions,
+  paginationHelpers,
+} from 'src/common/helpers/pagination';
 
 @Injectable()
 export class ClientsService {
@@ -60,16 +64,12 @@ export class ClientsService {
 
   async findAll(
     userId: string,
-    query?: {
-      search?: string;
-      page?: number;
-      limit?: number;
-    },
+    options: IPaginationOptions,
+    search_query: string,
   ) {
-    const page = Number(query?.page || 1);
-    const limit = Number(query?.limit || 10);
-    const skip = (page - 1) * limit;
-    const search = query?.search?.trim();
+    const { page, limit, skip, sortBy, sortOrder } =
+      paginationHelpers.calculatePagination(options);
+    const search = search_query?.trim();
 
     const where: Prisma.ClientWhereInput = {
       user_id: userId,
@@ -91,7 +91,7 @@ export class ClientsService {
         skip,
         take: limit,
         orderBy: {
-          created_at: 'desc',
+          [sortBy]: sortOrder,
         },
         include: {
           _count: {

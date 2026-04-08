@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { InteractionLog, Prisma } from '@prisma/client';
+import {
+  IPaginationOptions,
+  paginationHelpers,
+} from 'src/common/helpers/pagination';
+import { GetInteractionsFilterDto } from './dto/filters.dto';
 
 @Injectable()
 export class InteractionsService {
@@ -22,34 +27,44 @@ export class InteractionsService {
 
   async findAll(
     userId: string,
-    query: {
-      page?: number;
-      limit?: number;
-      client_id?: string;
-      project_id?: string;
-      type?: string;
-      from_date?: string;
-      to_date?: string;
-    },
+    options: IPaginationOptions,
+    filters: GetInteractionsFilterDto,
+    search_query: string,
   ) {
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const {
+      page,
+      limit,
+      skip,
+      sortBy = 'date',
+      sortOrder,
+    } = paginationHelpers.calculatePagination(options);
+    const { type, client, project, start_date, end_date } = filters;
 
     const where: Prisma.InteractionLogWhereInput = {
       user_id: userId,
-      ...(query.client_id && { client_id: query.client_id }),
-      ...(query.project_id && { project_id: query.project_id }),
-      ...(query.type && { type: query.type as any }),
-      ...(query.from_date || query.to_date
+      ...(client && { client_id: client }),
+      ...(project && { project_id: project }),
+      ...(type && { type: type as any }),
+      ...(start_date || end_date
         ? {
             date: {
-              ...(query.from_date && { gte: new Date(query.from_date) }),
-              ...(query.to_date && { lte: new Date(query.to_date) }),
+              ...(start_date && { gte: new Date(start_date) }),
+              ...(end_date && { lte: new Date(end_date) }),
             },
           }
         : {}),
     };
+
+    if (search_query) {
+      where.OR = [
+        {
+          notes: {
+            contains: search_query,
+            mode: 'insensitive',
+          },
+        },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.interactionLog.findMany({
@@ -58,7 +73,7 @@ export class InteractionsService {
           client: true,
           project: true,
         },
-        orderBy: { date: 'desc' },
+        orderBy: { [sortBy]: sortOrder },
         skip,
         take: limit,
       }),
