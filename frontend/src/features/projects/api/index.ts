@@ -4,9 +4,19 @@ import { ICreateProjectFormValues } from "../types";
 const projectApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllProjects: builder.query({
-      query: () => ({
+      query: ({
+        search_query,
+        status,
+      }: {
+        search_query?: string;
+        status?: string;
+      }) => ({
         method: "GET",
         url: "/projects",
+        params: {
+          search_query,
+          status,
+        },
       }),
       providesTags: ["projects"],
     }),

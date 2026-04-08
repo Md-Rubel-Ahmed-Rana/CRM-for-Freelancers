@@ -4,9 +4,12 @@ import { ICreateReminderFormValues } from "../types";
 const reminderApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllReminders: builder.query({
-      query: () => ({
+      query: ({ search_query }: { search_query?: string }) => ({
         method: "GET",
         url: "/reminders",
+        params: {
+          search_query,
+        },
       }),
       providesTags: ["reminders"],
     }),
