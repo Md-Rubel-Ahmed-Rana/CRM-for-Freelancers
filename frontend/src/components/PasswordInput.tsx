@@ -14,6 +14,7 @@ type Props<T extends FieldValues> = {
   errors: FieldErrors<T>;
   placeholder?: string;
   isDisabled: boolean;
+  defaultValue?: string;
 };
 
 const PasswordInput = <T extends FieldValues>({
@@ -23,6 +24,7 @@ const PasswordInput = <T extends FieldValues>({
   errors,
   placeholder = "••••••••",
   isDisabled = false,
+  defaultValue,
 }: Props<T>) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -45,6 +47,7 @@ const PasswordInput = <T extends FieldValues>({
             },
           })}
           disabled={isDisabled}
+          defaultValue={defaultValue}
         />
 
         <button
