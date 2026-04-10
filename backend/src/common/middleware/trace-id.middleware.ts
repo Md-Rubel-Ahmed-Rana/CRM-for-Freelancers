@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid';
+import { randomUUID } from 'crypto';
 import { Request, Response, NextFunction } from 'express';
 
 export function traceIdMiddleware(
@@ -6,6 +6,6 @@ export function traceIdMiddleware(
   res: Response,
   next: NextFunction,
 ) {
-  req['traceId'] = uuid().replace(/-/g, '');
+  req['traceId'] = randomUUID().replace(/-/g, '');
   next();
 }
